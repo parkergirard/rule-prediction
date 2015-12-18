@@ -1,0 +1,17 @@
+package phonemes;
+/**
+ * Manner for the phoneme
+ */
+public enum MANNER {
+	// FOLLOWING ARE FOR CONSONANTS
+	STOP,
+	AFFRICATE,
+	FRICATIVE,
+	NASAL,
+	APPROXIMANT,
+	SEMIVOWEL,
+	// FOLLOWING ARE FOR VOWELS
+	MONOPHTHONG,
+	DIPHTHONG,
+	RCOLORED
+}
