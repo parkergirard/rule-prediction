@@ -3,7 +3,7 @@ package analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import phonemes.PHONEME;
+import enums.PHONEME;
 
 /**
  * Maintains an ordered sequence of phonemes

@@ -22,9 +22,9 @@ public class RulePredictionTest {
 	@Test
 	public void guessProb2() {
 		Map<String, String> map = new HashMap<String, String>();
+		map.put("K-AE-T", "T-AE-T");
 		map.put("P-AA-T", "P-AA-T");
 		map.put("T-AA-P", "T-AA-P");
-		map.put("K-AE-T", "T-AE-T");
 		map.put("B-AE-K", "B-AE-T");
 		map.put("D-EY", "D-EY");
 		

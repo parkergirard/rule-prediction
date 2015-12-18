@@ -1,4 +1,4 @@
-package phonemes;
+package enums;
 /**
  * Consonant vs Vowel
  *

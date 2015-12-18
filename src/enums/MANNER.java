@@ -1,4 +1,4 @@
-package phonemes;
+package enums;
 /**
  * Manner for the phoneme
  */

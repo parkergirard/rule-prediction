@@ -1,4 +1,4 @@
-package phonemes;
+package enums;
 /**
  * Whether or not a phoneme is voiced
  *
