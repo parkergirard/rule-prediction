@@ -39,6 +39,10 @@ public class PhonemeSequence {
 		return phonemes;
 	}
 	
+	public int size() {
+		return phonemes.size();
+	}
+	
 	@Override
 	public String toString() {
 		String s = "";

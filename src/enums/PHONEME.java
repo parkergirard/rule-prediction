@@ -1,4 +1,5 @@
 package enums;
+
 /**
  * Representations of phonemes corresponding to
  * the Arpabet (https://en.wikipedia.org/wiki/Arpabet, null, null),

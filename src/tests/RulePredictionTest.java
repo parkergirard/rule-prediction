@@ -22,14 +22,14 @@ public class RulePredictionTest {
 	@Test
 	public void guessProb2() {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("K-AE-T", "T-AE-T");
-		map.put("P-AA-T", "P-AA-T");
-		map.put("T-AA-P", "T-AA-P");
-		map.put("B-AE-K", "B-AE-T");
-		map.put("D-EY", "D-EY");
+//		map.put("K-AE-T", "T-AE-T");
+//		map.put("P-AA-T", "P-AA-T");
+//		map.put("T-AA-P", "T-AA-P");
+//		map.put("B-AE-K", "B-AE-T");
+//		map.put("D-EY", "D-EY");
+		map.put("P-AA_R K-ER P-Y-ER", "P-AA_R T-ER P-Y-ER");
 		
 		RulePrediction rp = new RulePrediction(map);
-		
 		Set<String> guesses = rp.guessPronunciation("G-EY-M");
 
 		Set<String> expectedGuesses = new HashSet<String>();
