@@ -1,7 +1,6 @@
 package analysis;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,8 +15,9 @@ public class RulePrediction {
 	private Map<PhonemeSequence[], PhonemeSequence[]>
 		targetToPronunciation;
 	
-	// maps phonetic environment to a set of rule
-	public Map<PhoneticEnvironment, Set<Rule>> envToRules;
+	// maps a phoneme to a set of rules for that phoneme
+		// (the rules alter in phonetic environments)
+	public Map<PHONEME, Set<Rule>> phonemeToRules;
 		
 	/**
 	 * Construct given a map of strings,
@@ -44,7 +44,7 @@ public class RulePrediction {
 			targetToPronunciation.put(target, val);
 		}
 		
-		envToRules = new HashMap<PhoneticEnvironment, Set<Rule>>();
+		phonemeToRules = new HashMap<PHONEME, Set<Rule>>();
 		formRules();
 	}
 	
@@ -128,127 +128,21 @@ public class RulePrediction {
 						// this phoneme comes before (the beginning of) a vowel
 						vowelPosition = VOWEL_POSITION.BEFORE;
 					}
-
-					// goal: look at any rule that exists with the same
-					// from features, and contains this phonetic environment
 					
-					// construct global rule with this transformation if
-					// the child transformed the phoneme
-					Rule globalRule = new Rule(true);
-					globalRule.setOriginalFeatures(new FeatureProperties(
-							targetPhoneme.getPlace(),
-							targetPhoneme.getManner(), 
-							targetPhoneme.getVoice()));
-					globalRule.setTransformsToFeatures(new FeatureProperties(
-							actualPhoneme.getPlace(),
-							actualPhoneme.getManner(), 
-							actualPhoneme.getVoice()));
+					// get rules for this phoneme
+					Set<Rule> rulesForPhoneme = 
+							phonemeToRules.get(targetPhoneme);
 					
-					// CONSTRUCT PHONETIC ENVIRONMENT
-
-					PhoneticEnvironment env = new PhoneticEnvironment(false);
-					// comes after
-					MANNER comesAfterManner = null;
-					PLACE comesAfterPlace = null;
-					VOICE comesAfterVoice = null;
-					if (previousPhoneme != null) {
-						comesAfterPlace = previousPhoneme.getPlace();
-						comesAfterManner = previousPhoneme.getManner();
-						comesAfterVoice = previousPhoneme.getVoice();
-						env.addComesAfterFeatures(comesAfterPlace,
-							comesAfterManner, 
-							comesAfterVoice);
-					}
-					// comes before
-					MANNER comesBeforeManner = null;
-					PLACE comesBeforePlace = null;
-					VOICE comesBeforeVoice = null;
-					if (nextPhoneme != null) {
-						comesBeforePlace = nextPhoneme.getPlace();
-						comesBeforeManner = nextPhoneme.getManner();
-						comesBeforeVoice = nextPhoneme.getVoice();
-						env.addComesBeforeFeatures(comesBeforePlace,
-							comesBeforeManner, 
-							comesBeforeVoice);
-					}
-					
-					// position relative to word/syllable/vowel
-					env.addWordPlacement(wordPosition);
-					env.addSyllablePlacement(syllablePosition);
-					if (vowelPosition != null) {
-						env.addVowelPlacement(vowelPosition);
-					}
-					
-					
-//					System.out.println("TEST ENV");
-//					System.out.println(env);
-					
-					if (envToRules.containsKey(env)) {
-						System.out.println(
-								"*****RULE EXISTS WITHIN THIS ENV:****");
-							int count = 1;
-							Set<Rule> currentRules = envToRules.get(env);
-							Iterator<Rule> iter = currentRules.iterator();
-							while (iter.hasNext()) {
-								Rule r = iter.next();
-								System.out.println("***A RULE IN THIS IS: *** "
-										+ count++);
-								System.out.println(r);
-								
-								// check if these rules contradict each other
-								
-								// contradiction: if the original features of
-								// the rules are the same, but the transformation 
-								// is different
-								
-								if (r.getOriginalFeatures().equals(
-										globalRule.getOriginalFeatures()) &&
-										!r.getTransformsToFeatures().equals(
-												globalRule.
-												getTransformsToFeatures())) {
-									System.out.println("****CONTRADICTION**** ");
-									// original features of rules are same
-									// but transforms to features are not.
-									
-									// therefore, this rule is not global.
-									// remove the current phonetic environment
-									// from the rule
-
-									currentRules.remove(r);
-
-									if (!targetPhoneme.equals(actualPhoneme)) {
-										globalRule.remove(wordPosition, 
-											syllablePosition, vowelPosition, 
-											comesBeforePlace, comesAfterPlace,
-											comesBeforeManner, comesAfterManner,
-											comesBeforeVoice, comesAfterVoice);
-									}
-								}
-
-							// add a rule if the child made one / 
-							// we deleted one that we have to update
-							Set<Rule> updatedRules = 
-									new HashSet<Rule>(currentRules);
-							if (!targetPhoneme.equals(actualPhoneme)) {
-								updatedRules.add(globalRule);
-							}
-							envToRules.put(env, updatedRules);
-						}
+					// If targetPhoneme and actualPhoneme are the same:
+					if (targetPhoneme.equals(actualPhoneme)) {
 						
-					} else if (!targetPhoneme.equals(actualPhoneme)){
-						// child made a rule in a new env that we must add
-						Set<Rule> set = new HashSet<Rule>();
-						set.add(globalRule);
-						envToRules.put(env, set);
+						updateRulesIfTransformToSelf(targetPhoneme, rulesForPhoneme, wordPosition, 
+								syllablePosition, vowelPosition,
+								previousPhoneme, nextPhoneme);
+						
 					}
 					
-					System.out.println("\n\n\n\n ******CURRENT RULES ****\n");
-					for (Set<Rule> rs : envToRules.values()) {
-						for (Rule r : rs) {
-							System.out.println("\n***RULE****\n");
-							System.out.println(r);
-						}
-					}
+					
 					
 					j++;
 					previousPhoneme = targetPhoneme;
@@ -257,6 +151,92 @@ public class RulePrediction {
 			
 		}
 		
+	}
+	
+	private void updateRulesIfTransformToSelf(PHONEME targetPhoneme, Set<Rule> rulesForPhoneme,
+			POSITION wordPosition, POSITION syllablePosition, POSITION vowelPosition,
+			PHONEME previousPhoneme, PHONEME nextPhoneme) {
+		// go through every rule for this phoneme
+		for (Rule r : rulesForPhoneme) {
+			
+			PhoneticEnvironment ruleEnv = r.getEnvironment();
+			
+			// If this rule that says target
+			// changes to a phoneme other than itself
+			if (!r.getOriginalFeatures().
+					equals(r.getTransformsToFeatures())) {
+
+				// this rule says to transform to a dif phoneme
+				
+				// if rule env contains this word placement
+				ruleEnv.removeWordPlacement(wordPosition);
+
+				// if rule env contains this syllable placement
+				ruleEnv.removeSyllablePlacement(syllablePosition);
+					
+				// if rule env contains this vowel placement
+				ruleEnv.removeVowelPlacement(vowelPosition);
+				
+				// if rule env contains instructions to transform
+				// after certain features, remove them
+				ruleEnv.removeComesAfter(previousPhoneme.getPlace(), 
+						previousPhoneme.getManner(), 
+						previousPhoneme.getVoice());
+				
+				// if rule env contains instructions to transform
+				// before certain features, remove them
+				ruleEnv.removeComesBefore(nextPhoneme.getPlace(), 
+						nextPhoneme.getManner(), 
+						nextPhoneme.getVoice());
+				
+			} else {
+				// this rule says to transform the target
+				// phoneme into itself
+				
+				// *the target did transform into itself
+				// but we must update the rule to include
+				// this environment if it doesn't*
+				
+				// if the rule doesn't include
+				// the current phonetic environment,
+				// add it
+				ruleEnv.addWordPlacement(wordPosition);
+				ruleEnv.addSyllablePlacement(syllablePosition);
+				ruleEnv.addVowelPlacement(vowelPosition);
+				ruleEnv.addComesAfterFeatures(
+						previousPhoneme.getPlace(), 
+						previousPhoneme.getManner(), 
+						previousPhoneme.getVoice());
+				ruleEnv.addComesBeforeFeatures(
+						nextPhoneme.getPlace(), 
+						nextPhoneme.getManner(), 
+						nextPhoneme.getVoice());
+			}
+			
+		}
+		
+		// If there is not a rule that says targetPhoneme
+		// changes to itself, create one with a global
+		// phonetic environment
+		
+		if (rulesForPhoneme.size() == 0) {
+			// construct global rule with this transformation 
+			FeatureProperties orig = new FeatureProperties(
+					targetPhoneme.getPlace(),
+					targetPhoneme.getManner(), 
+					targetPhoneme.getVoice());
+			FeatureProperties transform = new FeatureProperties(
+					targetPhoneme.getPlace(),
+					targetPhoneme.getManner(), 
+					targetPhoneme.getVoice());
+			// make the rule (and make it global)
+			Rule newRule = new Rule(orig, transform, true);
+			// add rule to new set
+			Set<Rule> set = new HashSet<Rule>();
+			set.add(newRule);
+			// put new rule in map
+			phonemeToRules.put(targetPhoneme, set);
+		}
 	}
 
 	/**

@@ -32,7 +32,7 @@ public class RulePredictionTest {
 		
 		RulePrediction rp = new RulePrediction(map);
 		System.out.println("\n\n\n\n ******RULES ****\n\n\n");
-		for (Set<Rule> rs : rp.envToRules.values()) {
+		for (Set<Rule> rs : rp.phonemeToRules.values()) {
 			for (Rule r : rs) {
 				System.out.println("\n\n***NEW RULE****\n\n");
 				System.out.println(r);

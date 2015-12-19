@@ -23,16 +23,34 @@ public class Rule implements Comparable<Rule> {
 	 * phonetic environment and info about
 	 * what sounds change
 	 * @param env: What phonetic environment does it occur in?
-	 * @param fromProperties: What properties does it change from?
-	 * @param toProperties: What properties does it change to?
+	 * @param originalProperties: What properties does it change from?
+	 * @param transformsToProperties: What properties does it change to?
 	 */
 	public Rule(PhoneticEnvironment env,
-			FeatureProperties fromProperties,
-			FeatureProperties toProperties) {
+			FeatureProperties originalProperties,
+			FeatureProperties transformsToProperties) {
 		
 		this.environment = env;
-		this.originalFeatures = fromProperties;
-		this.transformsToFeatures = toProperties;
+		this.originalFeatures = originalProperties;
+		this.transformsToFeatures = transformsToProperties;
+	}
+	
+
+	/**
+	 * Construct a rule with info about
+	 * phonetic environment and info about
+	 * what sounds change
+	 * @param env: What phonetic environment does it occur in?
+	 * @param originalProperties: What properties does it change from?
+	 * @param transformsToProperties: What properties does it change to?
+	 * @param globalEnv: makes a global phonetic environment if true
+	 */
+	public Rule(FeatureProperties originalProperties,
+			FeatureProperties transformsToProperties, boolean globalEnv) {
+		
+		this.originalFeatures = originalProperties;
+		this.transformsToFeatures = transformsToProperties;
+		this.environment = new PhoneticEnvironment(globalEnv);
 	}
 
 	/**
@@ -81,6 +99,9 @@ public class Rule implements Comparable<Rule> {
 		return this.transformsToFeatures;
 	}
 	
+	public PhoneticEnvironment getEnvironment() {
+		return environment;
+	}
 	
 	@Override
 	public String toString() {

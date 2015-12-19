@@ -128,7 +128,7 @@ public class FeatureProperties {
 	
 	@Override
 	/**
-	 * A = B if B's details contain A's details
+	 * A = B if B's details are exactly A's details
 	 */
     public boolean equals(Object o) {
         if (this == o) {
@@ -138,9 +138,9 @@ public class FeatureProperties {
             return false;
         }
         FeatureProperties r = (FeatureProperties) o;
-        return  r.places.containsAll(places) &&
-        		r.manners.containsAll(manners) &&
-        		r.voices.containsAll(voices);
+        return  r.places.equals(places) &&
+        		r.manners.equals(manners) &&
+        		r.voices.equals(voices);
     }
 	
 	@Override
