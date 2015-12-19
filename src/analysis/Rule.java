@@ -99,6 +99,10 @@ public class Rule implements Comparable<Rule> {
 		return this.transformsToFeatures;
 	}
 	
+	public void setEnvironment(PhoneticEnvironment e) {
+		this.environment = e;
+	}
+	
 	public PhoneticEnvironment getEnvironment() {
 		return environment;
 	}
