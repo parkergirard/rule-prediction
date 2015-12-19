@@ -2,6 +2,8 @@ package analysis;
 
 import java.util.Objects;
 
+import enums.*;
+
 /**
  * Rule has information about phonetic environment, and
  * about what sounds change
@@ -61,7 +63,7 @@ public class Rule implements Comparable<Rule> {
 		transformsToFeatures = new FeatureProperties();
 		environment = new PhoneticEnvironment(global);
 	}
-	
+
 
 	public void setOriginalFeatures(FeatureProperties p) {
 		this.originalFeatures = p;
@@ -69,6 +71,14 @@ public class Rule implements Comparable<Rule> {
 	
 	public void setTransformsToFeatures(FeatureProperties p) {
 		this.transformsToFeatures = p;
+	}
+
+	public FeatureProperties getOriginalFeatures() {
+		return this.originalFeatures;
+	}
+	
+	public FeatureProperties getTransformsToFeatures() {
+		return this.transformsToFeatures;
 	}
 	
 	
@@ -120,5 +130,29 @@ public class Rule implements Comparable<Rule> {
     public int compareTo(Rule other) {
         return Integer.compare(sureness, other.sureness);
     }
+
+	public void remove(POSITION w, POSITION s, POSITION v, 
+			PLACE comesBeforePlace, PLACE comesAfterPlace,
+			MANNER comesBeforeManner, MANNER comesAfterManner,
+			VOICE comesBeforeVoice, VOICE comesAfterVoice) {
+		
+		if (w != null) {
+			environment.removeWordPlacement(w);
+		}
+		if (s != null) {
+			environment.removeSyllablePlacement(s);
+		}
+		if (v != null) {
+			environment.removeVowelPlacement(v);
+		}
+
+		environment.
+		removeComesAfter(comesAfterPlace, comesAfterManner, comesAfterVoice);
+		
+		environment.
+		removeComesBefore(comesBeforePlace, 
+				comesBeforeManner, comesBeforeVoice);
+		
+	}
 	
 }

@@ -136,7 +136,7 @@ public class PhoneticEnvironment {
 	
 	@Override
 	/**
-	 * PE A = PE B if everything is the same
+	 * PE A = PE B if B's details contains all of A's details
 	 */
     public boolean equals(Object o) {
         if (this == o) {
@@ -146,11 +146,11 @@ public class PhoneticEnvironment {
             return false;
         }
         PhoneticEnvironment r = (PhoneticEnvironment) o;
-        return  wordPlacement.equals(r.wordPlacement) &&
-        		syllablePlacement.equals(r.syllablePlacement) &&
-        		vowelPlacement.equals(r.vowelPlacement) &&
-                comesAfterFeatures.equals(r.comesAfterFeatures) &&
-                comesBeforeFeatures.equals(r.comesBeforeFeatures);
+        return  r.wordPlacement.containsAll(wordPlacement) &&
+        		r.syllablePlacement.containsAll(syllablePlacement) &&
+        		r.vowelPlacement.containsAll(vowelPlacement) &&
+                r.comesAfterFeatures.equals(comesAfterFeatures) &&
+                r.comesBeforeFeatures.equals(comesBeforeFeatures);
     }
 	
 	@Override
@@ -177,5 +177,29 @@ public class PhoneticEnvironment {
 		sb.append(getComesBeforeFeatures().toString());
 		
 		return sb.toString();
+	}
+
+	public void removeComesAfter(PLACE p,MANNER m, VOICE v) {
+		if (p != null) {
+			comesAfterFeatures.removePlace(p);
+		}
+		if (m != null) {
+			comesAfterFeatures.removeManner(m);
+		}
+		if (v != null) {
+			comesAfterFeatures.removeVoicing(v);
+		}
+	}
+
+	public void removeComesBefore(PLACE p,MANNER m, VOICE v) {
+		if (p != null) {
+			comesBeforeFeatures.removePlace(p);
+		}
+		if (m != null) {
+			comesBeforeFeatures.removeManner(m);
+		}
+		if (v != null) {
+			comesBeforeFeatures.removeVoicing(v);
+		}
 	}
 }
