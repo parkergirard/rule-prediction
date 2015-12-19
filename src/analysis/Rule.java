@@ -14,8 +14,10 @@ public class Rule implements Comparable<Rule> {
 	RULE_PROPERTY wordPlacement;
 	RULE_PROPERTY syllablePlacement;
 	RULE_PROPERTY vowelPlacement;
-	Set<RULE_PROPERTY> soundChanges;
-	int sureness; // how sure we are that this rule is correct
+	Properties fromProperties;
+	Properties toProperties;
+	int sureness = 0; // how sure we are that this rule is correct
+	int precedent = 0; // order of precedence for other rules (0 done first)
 	
 	/**
 	 * Construct a rule with info about
@@ -24,17 +26,20 @@ public class Rule implements Comparable<Rule> {
 	 * @param wordPlacement: Is it at the beginning or end of a word?
 	 * @param syllablePlacement: Is it at the beginning or end of a syllable?
 	 * @param vowelPlacement: Is it before, after, or surrounded by vowels?
-	 * @param soundChanges: What properties does a sound need 
-	 * 	to have in order to change? place, or manner, or voicing?
+	 * @param fromProperties: What properties does it change from?
+	 * @param toProperties: What properties does it change to?
 	 */
 	public Rule(RULE_PROPERTY wordPlacement, 
 			RULE_PROPERTY syllablePlacement,
-			RULE_PROPERTY vowelPlacement, Set<RULE_PROPERTY> soundChanges) {
+			RULE_PROPERTY vowelPlacement, Properties fromProperties,
+			Properties toProperties) {
 		this.wordPlacement = wordPlacement;
 		this.syllablePlacement = syllablePlacement;
 		this.vowelPlacement = vowelPlacement;
-		this.soundChanges = soundChanges;
+		this.fromProperties = fromProperties;
+		this.toProperties = toProperties;
 	}
+	
 	
 	@Override
 	/**
@@ -48,16 +53,19 @@ public class Rule implements Comparable<Rule> {
             return false;
         }
         Rule r = (Rule) o;
-        return Objects.equals(wordPlacement, r.wordPlacement) &&
+        return Objects.equals(sureness, r.sureness) &&
+        		Objects.equals(precedent, r.precedent) &&
+        		Objects.equals(wordPlacement, r.wordPlacement) &&
                 Objects.equals(syllablePlacement, r.syllablePlacement) &&
                 Objects.equals(vowelPlacement, r.vowelPlacement) &&
-                Objects.equals(soundChanges, r.soundChanges);
+                Objects.equals(fromProperties, r.fromProperties) &&
+                Objects.equals(toProperties, r.toProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-        		wordPlacement, syllablePlacement, vowelPlacement, soundChanges);
+        return Objects.hash(wordPlacement, syllablePlacement, vowelPlacement, 
+        		fromProperties, toProperties);
     }
 
     @Override
