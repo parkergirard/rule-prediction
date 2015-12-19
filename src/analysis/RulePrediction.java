@@ -1,5 +1,4 @@
 package analysis;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,8 @@ public class RulePrediction {
 	private Map<PhonemeSequence[], PhonemeSequence[]>
 		targetToPronunciation;
 	
-	private Set<Rule> rules;
+	// maps phonetic environment to a rule
+	private Map<PhoneticEnvironment, Rule> envToRules;
 		
 	/**
 	 * Construct given a map of strings,
@@ -43,7 +43,7 @@ public class RulePrediction {
 			targetToPronunciation.put(target, val);
 		}
 		
-		rules = new HashSet<Rule>();
+		envToRules = new HashMap<PhoneticEnvironment, Rule>();
 		formRules();
 	}
 	
@@ -68,7 +68,7 @@ public class RulePrediction {
 			PHONEME previousPhoneme = null;
 			
 			// loop through all syllables
-			POSITION wordPosition = POSITION.BEGINNING;
+			POSITION wordPosition = CONSONANT_POSITION.BEGINNING;
 			for (int i = 0; i < targetSyllables.length; i++) {
 				
 				List<PHONEME> targetPhonemeSeq = 
@@ -76,19 +76,19 @@ public class RulePrediction {
 				List<PHONEME> actualPhonemeSeq = 
 						actualSyllables[i].getSequence();
 
-				POSITION syllablePosition = POSITION.BEGINNING;
+				POSITION syllablePosition = CONSONANT_POSITION.BEGINNING;
 				// loop through all phonemes in the syllable
 				int j = 0;
 				for (PHONEME targetPhoneme : targetPhonemeSeq) {
 					// update to the position that we are in the syllable
 					if (j > 0) {
-						wordPosition = POSITION.MIDDLE;
-						syllablePosition = POSITION.MIDDLE;
+						wordPosition = CONSONANT_POSITION.MIDDLE;
+						syllablePosition = CONSONANT_POSITION.MIDDLE;
 					}
 					if (j == targetPhonemeSeq.size() - 1) {
-						syllablePosition = POSITION.END;
+						syllablePosition = CONSONANT_POSITION.END;
 						if (i == targetSyllables.length - 1) {
-							wordPosition = POSITION.END;
+							wordPosition = CONSONANT_POSITION.END;
 						}
 					}
 					
@@ -96,75 +96,87 @@ public class RulePrediction {
 
 					System.out.println("*******" + targetPhoneme.name() + 
 							" compared to " + actualPhoneme.name() + "*******");
-//					System.out.println("word " + wordPosition);
-//					System.out.println("syl " + syllablePosition);
-					
-					// compare places/manners/voices
-					Rule r = new Rule();
-					r.setFromProperties(new Properties(targetPhoneme.getPlace(),
-							targetPhoneme.getManner(), 
-							targetPhoneme.getVoice()));
-					r.setToProperties(new Properties(actualPhoneme.getPlace(),
-							actualPhoneme.getManner(), 
-							actualPhoneme.getVoice()));
-
-					
-					// add phonetic environment detail to the rule
-					
-					r.addWordPlacement(wordPosition);
-					r.addSyllablePlacement(syllablePosition);
-					
-					// collect information relative to previous
-					// and next phoneme
 					
 					POSITION vowelPosition = null;
 					PHONEME nextPhoneme = null;
-					
+
 					// get next phoneme
-					if (syllablePosition.equals(POSITION.END) && 
-							!wordPosition.equals(POSITION.END)) {
+					if (syllablePosition.equals(CONSONANT_POSITION.END) && 
+							!wordPosition.equals(CONSONANT_POSITION.END)) {
 						// at end of syllable, but not end of word
 						// look at next syllable
 						nextPhoneme = targetSyllables[i+1].getSequence().get(0);
-					} else if (!wordPosition.equals(POSITION.END)) {
+					} else if (!wordPosition.equals(CONSONANT_POSITION.END)) {
 						// not at end of syllable, and not end of word
 						// look at next syllable
 						nextPhoneme = targetPhonemeSeq.get(j+1);
 					}
-					
+
 					if (previousPhoneme != null && 
 							previousPhoneme.getGroup().equals(GROUP.VOWEL) &&
-								nextPhoneme != null && 
-								nextPhoneme.getGroup().equals(GROUP.VOWEL)) {
+							nextPhoneme != null && 
+							nextPhoneme.getGroup().equals(GROUP.VOWEL)) {
 						// this phoneme is in the middle of two vowels
-						vowelPosition = POSITION.SURROUNDED_BY;
+						vowelPosition = VOWEL_POSITION.SURROUNDED_BY;
 					} else if (previousPhoneme != null && 
 							previousPhoneme.getGroup().equals(GROUP.VOWEL)) {
 						// this phoneme comes after (the end of) a vowel
-						vowelPosition = POSITION.AFTER;
+						vowelPosition = VOWEL_POSITION.AFTER;
 					} else if (nextPhoneme != null && 
 							nextPhoneme.getGroup().equals(GROUP.VOWEL)) {
 						// this phoneme comes before (the beginning of) a vowel
-						vowelPosition = POSITION.BEFORE;
+						vowelPosition = VOWEL_POSITION.BEFORE;
 					}
+
+					// goal: look at any rule that exists with the same
+					// from features, and contains this phonetic environment
 					
-					if (vowelPosition != null) {
-						r.addVowelPlacement(vowelPosition);
-					}
+					// construct global rule with this transformation
+					Rule globalRule = new Rule(true);
+					globalRule.setOriginalFeatures(new FeatureProperties(
+							targetPhoneme.getPlace(),
+							targetPhoneme.getManner(), 
+							targetPhoneme.getVoice()));
+					globalRule.setTransformsToFeatures(new FeatureProperties(
+							actualPhoneme.getPlace(),
+							actualPhoneme.getManner(), 
+							actualPhoneme.getVoice()));
 					
-					// set comes after/before properties
+					// CONSTRUCT PHONETIC ENVIRONMENT
+
+					PhoneticEnvironment env = new PhoneticEnvironment(false);
+					// comes after
 					if (previousPhoneme != null) {
-						r.addComesAfterProperties(previousPhoneme.getPlace(),
-								previousPhoneme.getManner(), 
-								previousPhoneme.getVoice());
+						env.addComesAfterFeatures(previousPhoneme.getPlace(),
+							previousPhoneme.getManner(), 
+							previousPhoneme.getVoice());
 					}
+					// comes before
 					if (nextPhoneme != null) {
-						r.addComesBeforeProperties(nextPhoneme.getPlace(),
+						env.addComesBeforeFeatures(nextPhoneme.getPlace(),
 								nextPhoneme.getManner(), 
 								nextPhoneme.getVoice());
 					}
+					// position relative to word/syllable/vowel
+					env.addWordPlacement(wordPosition);
+					env.addSyllablePlacement(syllablePosition);
+					if (vowelPosition != null) {
+						env.addVowelPlacement(vowelPosition);
+					}
 					
-					System.out.println(r);
+					
+					System.out.println("TEST ENV");
+					System.out.println(env);
+					
+					if (envToRules.containsKey(env)) {
+						System.out.println("*****RULE EXISTS:****");
+						System.out.println(envToRules.get(env));
+					} else {
+						envToRules.put(env, globalRule);
+					}
+					
+					System.out.println(globalRule);
+					
 					j++;
 					previousPhoneme = targetPhoneme;
 				}

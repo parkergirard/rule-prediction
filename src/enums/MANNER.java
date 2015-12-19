@@ -2,7 +2,7 @@ package enums;
 /**
  * Manner for the phoneme
  */
-public enum MANNER {
+public enum MANNER implements FEATURE {
  // FOLLOWING ARE FOR CONSONANTS
  STOP,
  AFFRICATE,
