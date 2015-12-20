@@ -178,7 +178,7 @@ public class RulePredictionTest {
 			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
 			e.removeSyllablePlacement(CONSONANT_POSITION.MIDDLE);
 			e.removeVowelPlacement(VOWEL_POSITION.AFTER);
-			e.removeComesBefore(PHONEME.T);
+			e.removeComesBeforePhoneme(PHONEME.T);
 			newRule = 
 					new Rule(e, PHONEME.S, PHONEME.TH);
 			expectedRules.add(newRule);
@@ -191,9 +191,6 @@ public class RulePredictionTest {
 		} else if (!firstOptionIsRight && !secondOptionIsRight) {
 			fail("Neither option is in the rules");
 		}
-		
-		
-		
 		
 		firstOptionIsRight = false;
 		secondOptionIsRight = false;
@@ -257,6 +254,7 @@ public class RulePredictionTest {
 		} else if (!firstOptionIsRight && !secondOptionIsRight) {
 			fail("Neither option is in the rules");
 		}
+		
 	}
 	
 	// (adapted from http://www.asha.org/uploadedFiles/
@@ -457,6 +455,7 @@ public class RulePredictionTest {
 		} else if (!firstOptionIsRight && !secondOptionIsRight) {
 			fail("Neither option is in the rules");
 		}
+		
 	}
 	
 }

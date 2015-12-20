@@ -116,7 +116,7 @@ public class Rule implements Comparable<Rule> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(targetPhoneme.name() + " to " + actualPhoneme.name());
+		sb.append("\n" + targetPhoneme.name() + " to " + actualPhoneme.name());
 		
 		sb.append("\nOriginal Features\n");
 		sb.append(originalFeatures.toString());
@@ -162,29 +162,5 @@ public class Rule implements Comparable<Rule> {
     public int compareTo(Rule other) {
         return Integer.compare(sureness, other.sureness);
     }
-
-	public void remove(POSITION w, POSITION s, POSITION v, 
-			PLACE comesBeforePlace, PLACE comesAfterPlace,
-			MANNER comesBeforeManner, MANNER comesAfterManner,
-			VOICE comesBeforeVoice, VOICE comesAfterVoice) {
-		
-		if (w != null) {
-			environment.removeWordPlacement(w);
-		}
-		if (s != null) {
-			environment.removeSyllablePlacement(s);
-		}
-		if (v != null) {
-			environment.removeVowelPlacement(v);
-		}
-
-		environment.
-		removeComesAfter(comesAfterPlace, comesAfterManner, comesAfterVoice);
-		
-		environment.
-		removeComesBefore(comesBeforePlace, 
-				comesBeforeManner, comesBeforeVoice);
-		
-	}
 	
 }

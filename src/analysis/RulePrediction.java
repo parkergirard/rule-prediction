@@ -60,10 +60,6 @@ public class RulePrediction {
 			PhonemeSequence[] targetSyllables = e.getKey();
 			PhonemeSequence[] actualSyllables = e.getValue();
 
-			for (PhonemeSequence ps : targetSyllables) {
-				System.out.println(ps);
-			}
-
 			if (targetSyllables.length != actualSyllables.length) {
 				throw new RuntimeException("Ommisions/Insertions"
 						+ " not implemented yet");
@@ -382,9 +378,8 @@ public class RulePrediction {
 		// after certain features, remove them
 		// UNLESS the previous phoneme is a vowel
 		if (previousPhoneme != null && !previousPhoneme.getGroup().equals(GROUP.VOWEL)) {
-			System.out.println("Prev" + previousPhoneme);
 			if (remove) {
-				ruleEnv.removeComesAfter(previousPhoneme);
+				ruleEnv.removeComesAfterPhoneme(previousPhoneme);
 			} else {
 				ruleEnv.addComesAfter(previousPhoneme);
 			}
@@ -394,9 +389,8 @@ public class RulePrediction {
 		// before certain features, remove them
 		// UNLESS the next phoneme is a vowel
 		if (nextPhoneme != null && !nextPhoneme.getGroup().equals(GROUP.VOWEL)) {
-			System.out.println("Next" + nextPhoneme);
 			if (remove) {
-				ruleEnv.removeComesBefore(nextPhoneme);
+				ruleEnv.removeComesBeforePhoneme(nextPhoneme);
 			} else {
 				ruleEnv.addComesBefore(nextPhoneme);
 			}
@@ -404,6 +398,14 @@ public class RulePrediction {
 
 		return ruleEnv;
 
+	}
+	
+	/**
+	 * Generalizes rules from the specific rules formed from the
+	 * training set
+	 */
+	public void generalizeRules() {
+		
 	}
 
 	/**
