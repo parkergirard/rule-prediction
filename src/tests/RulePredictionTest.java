@@ -313,13 +313,215 @@ public class RulePredictionTest {
 		map.put("S-L-IY-P", "S-W-IY-P");
 		
 		RulePrediction rp = new RulePrediction(map);
-
-		assertEquals(14, rp.getRules().size());
+		
+		int size = rp.getRules().size();
+		
+		assertTrue(size == 10 || size == 11 || size == 12);
 
 		Set<Rule> expectedRules = new HashSet<Rule>();
 
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
 
+		// D -> D always
+		Rule newRule = 
+				new Rule(e, PHONEME.D.getProperties(), PHONEME.D.getProperties());
+		expectedRules.add(newRule);
+
+		// UH -> UH always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.UH.getProperties(), PHONEME.UH.getProperties());
+		expectedRules.add(newRule);
+
+		// K -> K always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.K.getProperties(), PHONEME.K.getProperties());
+		expectedRules.add(newRule);
+
+		// P -> P always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.P.getProperties(), PHONEME.P.getProperties());
+		expectedRules.add(newRule);
+
+		// IH -> IH always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.IH.getProperties(), PHONEME.IH.getProperties());
+		expectedRules.add(newRule);
+		
+		// AO -> AO always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.AO.getProperties(), PHONEME.AO.getProperties());
+		expectedRules.add(newRule);
+
+		// IY -> IY always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.IY.getProperties(), PHONEME.IY.getProperties());
+		expectedRules.add(newRule);
+
+		// R -> W always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.R.getProperties(), PHONEME.W.getProperties());
+		expectedRules.add(newRule);
+
+		// S -> S always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.S.getProperties(), PHONEME.S.getProperties());
+		expectedRules.add(newRule);
+
+		// L -> W always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.L.getProperties(), PHONEME.W.getProperties());
+		expectedRules.add(newRule);
+		
+		// NG -> NG always
+		e = new PhoneticEnvironment(true);
+		newRule = 
+				new Rule(e, PHONEME.NG.getProperties(), PHONEME.NG.getProperties());
+		expectedRules.add(newRule);
+		
+		
+		assertTrue(rp.getRules().containsAll(expectedRules));
+		
+		// NOW LOOK AT DIFFERENT OPTIONS FOR THE OTHER RULES
+		// ENSURE THAT AT LEAST ONE OPTION IS IN THE RULES
+		// (some rules will vary depending on the order the data is read)
+
+		boolean firstOptionIsRight = false;
+		boolean secondOptionIsRight = false;
+		/* FIRST OPTION:
+		 * G → G always, except at the end of a word/end of 
+		 * a syllable/after vowel/after “AO” or "IH"
+		 * AND
+			G → K at the end of a word/end of a syllable/after vowel/after “AO” or "IH"}
+		 */
+		// reset expected
+		expectedRules = new HashSet<Rule>();
+		// G → G always, except at the end of a word/end of 
+		// a syllable/after vowel/after “AO” or "IH"
+		e = new PhoneticEnvironment(true);
+		e.removeWordPlacement(CONSONANT_POSITION.END);
+		e.removeSyllablePlacement(CONSONANT_POSITION.END);
+		e.removeVowelPlacement(VOWEL_POSITION.AFTER);
+		e.removeComesAfter(PHONEME.AO);
+		e.removeComesAfter(PHONEME.IH);
+		newRule = 
+				new Rule(e, PHONEME.G.getProperties(), PHONEME.G.getProperties());
+		expectedRules.add(newRule);
+
+		// G → K at the end of a word/end of a syllable/after vowel/after “AO” or "IH"
+		e = new PhoneticEnvironment(false);
+		e.setWordPlacement(CONSONANT_POSITION.END);
+		e.setSyllablePlacement(CONSONANT_POSITION.END);
+		e.setVowelPlacement(VOWEL_POSITION.AFTER);
+		e.addComesAfter(PHONEME.AO);
+		e.addComesAfter(PHONEME.IH);
+		newRule = 
+				new Rule(e, PHONEME.G.getProperties(), PHONEME.K.getProperties());
+		expectedRules.add(newRule);
+		
+		firstOptionIsRight = rp.getRules().containsAll(expectedRules);
+		
+		if (!firstOptionIsRight) {
+			// try the second option
+			
+			/* SECOND OPTION:
+			 * G → K always, except at the middle of a word/beginning 
+			 * of a syllable/surrounded by vowels/before “IY”
+			 */
+			
+			expectedRules = new HashSet<Rule>();
+
+			e = new PhoneticEnvironment(true);
+			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
+			e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
+			e.removeVowelPlacement(VOWEL_POSITION.SURROUNDED_BY);
+			e.removeComesBefore(PHONEME.IY);
+			newRule = 
+					new Rule(e, PHONEME.G.getProperties(), PHONEME.K.getProperties());
+			expectedRules.add(newRule);
+			
+			secondOptionIsRight = rp.getRules().containsAll(expectedRules);
+		}
+		
+		if (firstOptionIsRight && secondOptionIsRight) {
+			fail("Both options cannot be right :(");
+		} else if (!firstOptionIsRight && !secondOptionIsRight) {
+			fail("Neither option is in the rules");
+		}
+		
+		
+		firstOptionIsRight = false;
+		secondOptionIsRight = false;
+		/* FIRST OPTION:
+		 B → B always, except at the end of a word/at the end
+		  of a syllable/after vowel/after "UH"
+		AND	
+		B → P at the end of a word/at the end of a syllable/after vowel/after "UH"
+		 */
+		// reset expected
+		expectedRules = new HashSet<Rule>();
+		
+		//  B → B always, except at the end of a word/at the end
+		//  of a syllable/after vowel/after "UH"
+		e = new PhoneticEnvironment(true);
+		e.removeWordPlacement(CONSONANT_POSITION.END);
+		e.removeSyllablePlacement(CONSONANT_POSITION.END);
+		e.removeVowelPlacement(VOWEL_POSITION.AFTER);
+		e.removeComesAfter(PHONEME.UH);
+		newRule = 
+				new Rule(e, PHONEME.B.getProperties(), PHONEME.B.getProperties());
+		expectedRules.add(newRule);
+		
+		// B → P at the end of a word/at the end of a syllable/after vowel/after "UH"
+		e = new PhoneticEnvironment(false);
+		e.addWordPlacement(CONSONANT_POSITION.END);
+		e.addSyllablePlacement(CONSONANT_POSITION.END);
+		e.addVowelPlacement(VOWEL_POSITION.AFTER);
+		e.addComesAfter(PHONEME.UH);
+		newRule = 
+				new Rule(e, PHONEME.B.getProperties(), PHONEME.P.getProperties());
+		expectedRules.add(newRule);
+		
+		firstOptionIsRight = rp.getRules().containsAll(expectedRules);
+
+		if (!firstOptionIsRight) {
+			// try the second option
+
+			/* SECOND OPTION:
+			 * B → P  always, except at the middle of a word/beginning 
+			 * of a syllable/surrounded by vowels/before “IH”
+			 */
+
+			expectedRules = new HashSet<Rule>();
+
+			e = new PhoneticEnvironment(true);
+			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
+			e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
+			e.removeVowelPlacement(VOWEL_POSITION.SURROUNDED_BY);
+			e.removeComesBefore(PHONEME.IH);
+			newRule = 
+					new Rule(e, PHONEME.B.getProperties(), PHONEME.P.getProperties());
+			expectedRules.add(newRule);
+			
+			secondOptionIsRight = rp.getRules().containsAll(expectedRules);
+			
+		}
+
+		
+		if (firstOptionIsRight && secondOptionIsRight) {
+			fail("Both options cannot be right :(");
+		} else if (!firstOptionIsRight && !secondOptionIsRight) {
+			fail("Neither option is in the rules");
+		}
+		
 	}
 	
 }

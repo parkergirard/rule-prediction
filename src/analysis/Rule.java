@@ -13,6 +13,8 @@ public class Rule implements Comparable<Rule> {
 	PhoneticEnvironment environment;
 	
 	// properties from the target sound to the pronounced sound
+	PHONEME targetPhoneme;
+	PHONEME actualPhoneme;
 	FeatureProperties originalFeatures;
 	FeatureProperties transformsToFeatures;
 	int sureness = 0; // how sure we are that this rule is correct

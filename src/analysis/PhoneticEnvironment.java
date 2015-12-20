@@ -62,6 +62,21 @@ public class PhoneticEnvironment {
 	
 	// OPTIONS TO UPDATE AND GET INFO ABOUT THE RULE
 
+	public void setWordPlacement(POSITION p) {
+		wordPlacement = new HashSet<POSITION>();
+		wordPlacement.add(p);
+	}
+	
+	public void setSyllablePlacement(POSITION p) {
+		syllablePlacement = new HashSet<POSITION>();
+		syllablePlacement.add(p);
+	}
+	
+	public void setVowelPlacement(POSITION p) {
+		vowelPlacement = new HashSet<POSITION>();
+		vowelPlacement.add(p);
+	}
+	
 	public void addWordPlacement(POSITION p) {
 		wordPlacement.add(p);
 	}
@@ -144,7 +159,7 @@ public class PhoneticEnvironment {
 	
 	@Override
 	/**
-	 * PE A = PE B if B's details contains all of A's details
+	 * PE A = PE B if B's details equal all of A's details
 	 */
     public boolean equals(Object o) {
         if (this == o) {
@@ -154,9 +169,9 @@ public class PhoneticEnvironment {
             return false;
         }
         PhoneticEnvironment r = (PhoneticEnvironment) o;
-        return  r.wordPlacement.containsAll(wordPlacement) &&
-        		r.syllablePlacement.containsAll(syllablePlacement) &&
-        		r.vowelPlacement.containsAll(vowelPlacement) &&
+        return  r.wordPlacement.equals(wordPlacement) &&
+        		r.syllablePlacement.equals(syllablePlacement) &&
+        		r.vowelPlacement.equals(vowelPlacement) &&
                 r.comesAfterFeatures.equals(comesAfterFeatures) &&
                 r.comesBeforeFeatures.equals(comesBeforeFeatures);
     }
