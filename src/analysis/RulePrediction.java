@@ -94,9 +94,6 @@ public class RulePrediction {
 					}
 					
 					PHONEME actualPhoneme = actualPhonemeSeq.get(j);
-
-					System.out.println("*******" + targetPhoneme.name() + 
-							" compared to " + actualPhoneme.name() + "*******");
 					
 					POSITION vowelPosition = null;
 					PHONEME nextPhoneme = null;
@@ -168,11 +165,6 @@ public class RulePrediction {
 		// we check this later
 		boolean existsRuleFromTargetToActual = false;
 
-		boolean test = targetPhoneme.equals(PHONEME.D) && actualPhoneme.equals(PHONEME.D);
-		test = false;
-		if (test) {
-			System.out.println("*************************D AND D ***********************");
-		}
 		
 		if (rulesForPhoneme != null) {
 			// go through every rule for this phoneme
@@ -181,10 +173,6 @@ public class RulePrediction {
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 				
-				if (test) {
-					System.out.println(r);
-					System.out.println("END OF RULE");
-				}
 				
 				FeatureProperties ruleTransformsTo = r.getTransformsToFeatures();
 				
@@ -200,10 +188,6 @@ public class RulePrediction {
 							vowelPosition, previousPhoneme, nextPhoneme, -1);
 					r.setEnvironment(ruleEnv);
 					
-					if (test) {
-						System.out.println("********RULE CHANGED TO *********");
-						System.out.println(r);
-					}
 					
 				} else if (!ruleTransformsTo.getPlaces().
 						contains(actualPhoneme.getPlace()) ||
@@ -258,7 +242,6 @@ public class RulePrediction {
 		
 		
 		if (!existsRuleFromTargetToActual) {
-			System.out.println("MAKING RULE NOW");
 			// we have to add a rule
 			Rule newRule = null;
 			
@@ -303,8 +286,6 @@ public class RulePrediction {
 				newRule.setEnvironment(env);
 				
 			}
-			if (test)
-			System.out.println(newRule);
 			
 			Set<Rule> set = phonemeToRules.get(targetPhoneme);
 			if (set == null) {
@@ -322,11 +303,6 @@ public class RulePrediction {
 			PHONEME previousPhoneme, PHONEME nextPhoneme) {
 
 
-		boolean test = targetPhoneme.equals(PHONEME.D);
-		if (test) {
-			System.out.println("*************************D AND D ***********************");
-		}
-		
 		// If there is not a rule that says targetPhoneme
 		// changes to itself, create one with a global
 		// phonetic environment
@@ -352,10 +328,6 @@ public class RulePrediction {
 			// rules exist
 			// go through every rule for this phoneme
 			for (Rule r : rulesForPhoneme) {
-				if (test) {
-					System.out.println("*****EXISTED RULE FOR D *******");
-					System.out.println(r);
-				}
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 				
@@ -383,15 +355,10 @@ public class RulePrediction {
 					// if the rule doesn't include
 					// the current phonetic environment,
 					// add it
-					if (test) {
-						System.out.println("ADDING ENV");
-					}
 					ruleEnv = modifyProperties(ruleEnv, wordPosition,
 							syllablePosition, vowelPosition, previousPhoneme,
 							nextPhoneme, 1);
 					r.setEnvironment(ruleEnv);
-					System.out.println("****** NEW RULE ******");
-					System.out.println(r);
 				}
 				
 			}
