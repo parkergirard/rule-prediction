@@ -25,7 +25,9 @@ public class RulePredictionTest {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("D-AA-G", "D-AA-G");
 		map.put("G-AA-D", "D-AA-D");
-		map.put("K-IH T-IY", "T-IH T-IY");
+//		map.put("K-IH T-IY", "T-IH T-IY");
+		
+		
 		
 		RulePrediction rp = new RulePrediction(map);
 		System.out.println("\n\n\n\n ******RULES ****\n\n\n");

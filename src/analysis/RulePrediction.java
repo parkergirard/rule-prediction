@@ -149,6 +149,8 @@ public class RulePrediction {
 								syllablePosition, vowelPosition,
 								previousPhoneme, nextPhoneme);
 					}
+					
+					// move to next phoneme
 					j++;
 					previousPhoneme = targetPhoneme;
 				}
@@ -165,6 +167,12 @@ public class RulePrediction {
 
 		// we check this later
 		boolean existsRuleFromTargetToActual = false;
+
+		boolean test = targetPhoneme.equals(PHONEME.D) && actualPhoneme.equals(PHONEME.D);
+		test = false;
+		if (test) {
+			System.out.println("*************************D AND D ***********************");
+		}
 		
 		if (rulesForPhoneme != null) {
 			// go through every rule for this phoneme
@@ -173,12 +181,17 @@ public class RulePrediction {
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 				
-				// If this rule that says target
-				// changes to itself
+				if (test) {
+					System.out.println(r);
+					System.out.println("END OF RULE");
+				}
+				
 				FeatureProperties ruleTransformsTo = r.getTransformsToFeatures();
+				
+				// If this rule that says target changes to itself
 				if (r.getOriginalFeatures().
 						equals(r.getTransformsToFeatures())) {
-	
+					
 					// this rule says to transform to itself
 					// (but the child transformed it to something else)
 					// delete the the properties of this environment
@@ -186,6 +199,12 @@ public class RulePrediction {
 					ruleEnv = modifyProperties(ruleEnv, wordPosition, syllablePosition, 
 							vowelPosition, previousPhoneme, nextPhoneme, -1);
 					r.setEnvironment(ruleEnv);
+					
+					if (test) {
+						System.out.println("********RULE CHANGED TO *********");
+						System.out.println(r);
+					}
+					
 				} else if (!ruleTransformsTo.getPlaces().
 						contains(actualPhoneme.getPlace()) ||
 						!ruleTransformsTo.getManners().
@@ -233,12 +252,13 @@ public class RulePrediction {
 				targetPhoneme.getManner(), 
 				targetPhoneme.getVoice());
 		FeatureProperties transform = new FeatureProperties(
-				targetPhoneme.getPlace(),
-				targetPhoneme.getManner(), 
-				targetPhoneme.getVoice());
+				actualPhoneme.getPlace(),
+				actualPhoneme.getManner(), 
+				actualPhoneme.getVoice());
+		
 		
 		if (!existsRuleFromTargetToActual) {
-			
+			System.out.println("MAKING RULE NOW");
 			// we have to add a rule
 			Rule newRule = null;
 			
@@ -253,6 +273,9 @@ public class RulePrediction {
 				
 				// construct the phonetic environment
 				PhoneticEnvironment env = new PhoneticEnvironment(false);
+				env.addWordPlacement(wordPosition);
+				env.addSyllablePlacement(syllablePosition);
+				env.addVowelPlacement(vowelPosition);
 				// comes after
 				MANNER comesAfterManner = null;
 				PLACE comesAfterPlace = null;
@@ -280,6 +303,8 @@ public class RulePrediction {
 				newRule.setEnvironment(env);
 				
 			}
+			if (test)
+			System.out.println(newRule);
 			
 			Set<Rule> set = phonemeToRules.get(targetPhoneme);
 			if (set == null) {
@@ -296,6 +321,11 @@ public class RulePrediction {
 			POSITION wordPosition, POSITION syllablePosition, POSITION vowelPosition,
 			PHONEME previousPhoneme, PHONEME nextPhoneme) {
 
+
+		boolean test = targetPhoneme.equals(PHONEME.D);
+		if (test) {
+			System.out.println("*************************D AND D ***********************");
+		}
 		
 		// If there is not a rule that says targetPhoneme
 		// changes to itself, create one with a global
@@ -322,7 +352,10 @@ public class RulePrediction {
 			// rules exist
 			// go through every rule for this phoneme
 			for (Rule r : rulesForPhoneme) {
-				
+				if (test) {
+					System.out.println("*****EXISTED RULE FOR D *******");
+					System.out.println(r);
+				}
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 				
@@ -350,10 +383,15 @@ public class RulePrediction {
 					// if the rule doesn't include
 					// the current phonetic environment,
 					// add it
+					if (test) {
+						System.out.println("ADDING ENV");
+					}
 					ruleEnv = modifyProperties(ruleEnv, wordPosition,
 							syllablePosition, vowelPosition, previousPhoneme,
 							nextPhoneme, 1);
 					r.setEnvironment(ruleEnv);
+					System.out.println("****** NEW RULE ******");
+					System.out.println(r);
 				}
 				
 			}
@@ -361,35 +399,76 @@ public class RulePrediction {
 	}
 
 
-	
+	/**
+	 * 
+	 * @param ruleEnv
+	 * @param wordPosition
+	 * @param syllablePosition
+	 * @param vowelPosition
+	 * @param previousPhoneme
+	 * @param nextPhoneme
+	 * @param addRemove: -1 = remove, 1 = add
+	 * @return
+	 */
 	private PhoneticEnvironment modifyProperties(PhoneticEnvironment ruleEnv,
 			POSITION wordPosition, POSITION syllablePosition,
 			POSITION vowelPosition, PHONEME previousPhoneme, PHONEME nextPhoneme,
 			int addRemove) {
 		
-		// if rule env contains this word placement
-		ruleEnv.removeWordPlacement(wordPosition);
+		boolean add = (addRemove == 1);
+		boolean remove = (addRemove == -1);
+		if (!add && !remove) {
+			throw new IllegalArgumentException("-1 to remove, 1 to add");
+		}
+		
+		
+		if (remove) {
+			// if rule env contains this word placement
+			ruleEnv.removeWordPlacement(wordPosition);
+		} else {
+			ruleEnv.addWordPlacement(wordPosition);
+		}
 
-		// if rule env contains this syllable placement
-		ruleEnv.removeSyllablePlacement(syllablePosition);
+		if (remove) {
+			// if rule env contains this syllable placement
+			ruleEnv.removeSyllablePlacement(syllablePosition);
+		} else {
+			ruleEnv.addSyllablePlacement(syllablePosition);
+		}
 			
-		// if rule env contains this vowel placement
-		ruleEnv.removeVowelPlacement(vowelPosition);
+		if (remove) {
+			// if rule env contains this vowel placement
+			ruleEnv.removeVowelPlacement(vowelPosition);
+		} else {
+			ruleEnv.addVowelPlacement(vowelPosition);
+		}
 		
 		// if rule env contains instructions to transform
 		// after certain features, remove them
 		if (previousPhoneme != null) {
-			ruleEnv.removeComesAfter(previousPhoneme.getPlace(), 
+			if (remove) {
+				ruleEnv.removeComesAfter(previousPhoneme.getPlace(), 
 					previousPhoneme.getManner(), 
 					previousPhoneme.getVoice());
+			} else {
+				ruleEnv.addComesAfterFeatures(previousPhoneme.getPlace(), 
+						previousPhoneme.getManner(), 
+						previousPhoneme.getVoice());
+			}
 		}
 		
 		// if rule env contains instructions to transform
 		// before certain features, remove them
 		if (nextPhoneme != null) {
-			ruleEnv.removeComesBefore(nextPhoneme.getPlace(), 
-					nextPhoneme.getManner(), 
-					nextPhoneme.getVoice());
+			if (remove) {
+				ruleEnv.removeComesBefore(nextPhoneme.getPlace(), 
+						nextPhoneme.getManner(), 
+						nextPhoneme.getVoice());
+			} else {
+				ruleEnv.addComesBeforeFeatures(nextPhoneme.getPlace(), 
+						nextPhoneme.getManner(), 
+						nextPhoneme.getVoice());
+			}
 		}
 		
 		return ruleEnv;
