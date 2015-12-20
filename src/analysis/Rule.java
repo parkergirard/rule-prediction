@@ -88,6 +88,14 @@ public class Rule implements Comparable<Rule> {
 	}
 
 
+	public PHONEME getTargetPhoneme() {
+		return targetPhoneme;
+	}
+	
+	public PHONEME getActualPhoneme() {
+		return actualPhoneme;
+	}
+	
 	public void setOriginalFeatures(FeatureProperties p) {
 		this.originalFeatures = p;
 	}
@@ -110,6 +118,15 @@ public class Rule implements Comparable<Rule> {
 	
 	public PhoneticEnvironment getEnvironment() {
 		return environment;
+	}
+	
+	/**
+	 * Returns whether or not this rule applies under any condition
+	 * starting with the targetPhoneme
+	 * @return if global or not
+	 */
+	public boolean isGlobal() {
+		return environment.isGlobal();
 	}
 	
 	@Override

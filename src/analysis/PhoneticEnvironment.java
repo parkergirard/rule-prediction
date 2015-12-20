@@ -186,6 +186,21 @@ public class PhoneticEnvironment {
 		comesBeforeFeatures.makePropertiesGlobal();
 	}
 	
+
+	/**
+	 * Returns whether or not this environment contains every possibility
+	 * of placement
+	 * @return if it is global or not
+	 */
+	public boolean isGlobal() {
+		
+		return wordPlacement.size() == CONSONANT_POSITION.values().length &&
+				syllablePlacement.size() == CONSONANT_POSITION.values().length &&
+				vowelPlacement.size() == VOWEL_POSITION.values().length &&
+				doesntComeAfterPhonemes.size() == 0 && 
+				doesntComeBeforePhonemes.size() == 0 ;
+	}
+	
 	@Override
 	/**
 	 * PE A = PE B if B's details equal all of A's details
@@ -234,11 +249,11 @@ public class PhoneticEnvironment {
 		sb.append("\nDoesn't Come Before PHONEMES\n");
 		sb.append(doesntComeBeforePhonemes);
 
-		sb.append("\nComes After Features\n");
-		sb.append(getComesAfterFeatures().toString());
-		
-		sb.append("\nComes Before Features\n");
-		sb.append(getComesBeforeFeatures().toString());
+//		sb.append("\nComes After Features\n");
+//		sb.append(getComesAfterFeatures().toString());
+//		
+//		sb.append("\nComes Before Features\n");
+//		sb.append(getComesBeforeFeatures().toString());
 		
 		return sb.toString();
 	}
