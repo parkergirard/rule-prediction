@@ -21,7 +21,7 @@ public class PhoneticEnvironment {
 	 * @param afterProperties: Descriptions of sounds after the rule occurs
 	 * @param beforeProperties: Descriptions of sounds before the rule occurs
 	 */
-	PhoneticEnvironment(Set<POSITION> wordPlacement, 
+	public PhoneticEnvironment(Set<POSITION> wordPlacement, 
 			Set<POSITION> syllablePlacement,
 			Set<POSITION> vowelPlacement, 
 			FeatureProperties afterProperties,
@@ -36,7 +36,7 @@ public class PhoneticEnvironment {
 		
 	}
 	
-	PhoneticEnvironment(boolean global) {
+	public PhoneticEnvironment(boolean global) {
 		wordPlacement = new HashSet<POSITION>();
 		syllablePlacement = new HashSet<POSITION>();
 		vowelPlacement = new HashSet<POSITION>();
@@ -107,6 +107,10 @@ public class PhoneticEnvironment {
 	public void addComesAfterFeatures(PLACE p, MANNER m, VOICE v) {
 		comesAfterFeatures.add(p, m, v);
 	}
+	
+	public void addComesAfter(PHONEME p) {
+		addComesAfterFeatures(p.getPlace(), p.getManner(), p.getVoice());
+	}
 
 	public FeatureProperties getComesAfterFeatures() {
 		return comesAfterFeatures;
@@ -120,6 +124,10 @@ public class PhoneticEnvironment {
 	 */
 	public void addComesBeforeFeatures(PLACE p, MANNER m, VOICE v) {
 		comesBeforeFeatures.add(p, m, v);
+	}
+	
+	public void addComesBefore(PHONEME p) {
+		addComesBeforeFeatures(p.getPlace(), p.getManner(), p.getVoice());
 	}
 
 	public FeatureProperties getComesBeforeFeatures() {
@@ -179,6 +187,10 @@ public class PhoneticEnvironment {
 		return sb.toString();
 	}
 
+	public void removeComesAfter(PHONEME p) {
+		removeComesAfter(p.getPlace(), p.getManner(), p.getVoice());
+	}
+	
 	public void removeComesAfter(PLACE p,MANNER m, VOICE v) {
 		if (p != null) {
 			comesAfterFeatures.removePlace(p);
@@ -191,6 +203,17 @@ public class PhoneticEnvironment {
 		}
 	}
 
+	public void removeComesBefore(PHONEME p) {
+		removeComesBefore(p.getPlace(), p.getManner(), p.getVoice());
+	}
+
+	public void makeComesAfterGlobal() {
+		comesAfterFeatures.makePropertiesGlobal();
+	}
+	public void makeComesBeforeGlobal() {
+		comesBeforeFeatures.makePropertiesGlobal();
+	}
+	
 	public void removeComesBefore(PLACE p,MANNER m, VOICE v) {
 		if (p != null) {
 			comesBeforeFeatures.removePlace(p);
