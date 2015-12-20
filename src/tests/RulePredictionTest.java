@@ -10,12 +10,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import enums.CONSONANT_POSITION;
-import enums.PHONEME;
-import enums.VOWEL_POSITION;
+import enums.*;
 
 public class RulePredictionTest {
 
+	@SuppressWarnings("unused")
 	private void printRules(Set<Rule> rules) {
 		System.out.println("\n\n\n\n ******RULES ****\n\n\n");
 		
@@ -171,14 +170,14 @@ public class RulePredictionTest {
 		boolean secondOptionIsRight = false;
 		/* FIRST OPTION:
 		 * {S → S always, except at the beginning of a word/beginning 
-		 * of a syllable/before a vowel/before “AA”
-		 * AND
-		 * S → TH at the beginning of a word/beginning/before a vowel/before “AA”}
+		 * of a syllable/before a vowel/before “AA” AND
+		S → TH at the beginning of a word/beginning of a 
+		syllable/before a vowel/before “AA”} 
 		 */
 		// reset expected
 		expectedRules = new HashSet<Rule>();
 		// S → S always, except at the beginning of a word/beginning of a 
-		// syllable/before a vowel/before "AA"
+		// syllable/before a vowel/before “AA”
 		e = new PhoneticEnvironment(true);
 		e.removeWordPlacement(CONSONANT_POSITION.BEGINNING);
 		e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
@@ -206,7 +205,7 @@ public class RulePredictionTest {
 			
 			/* SECOND OPTION:
 			 * {S → TH always, except at the middle of a word/middle of a 
-			 * syllable/before a vowel/after “AE”/before “T”}
+			 * syllable/after a vowel/after “AE”/before “T”}
 			 */
 			
 			expectedRules = new HashSet<Rule>();
@@ -214,7 +213,7 @@ public class RulePredictionTest {
 			e = new PhoneticEnvironment(true);
 			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
 			e.removeSyllablePlacement(CONSONANT_POSITION.MIDDLE);
-			e.removeVowelPlacement(VOWEL_POSITION.BEFORE);
+			e.removeVowelPlacement(VOWEL_POSITION.AFTER);
 			e.removeComesAfter(PHONEME.AE);
 			e.removeComesBefore(PHONEME.T);
 			newRule = 
@@ -321,13 +320,6 @@ public class RulePredictionTest {
 
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
 
-		// AE → AE always
-		Rule newRule = 
-				new Rule(e, PHONEME.AE.getProperties(), PHONEME.AE.getProperties());
-		expectedRules.add(newRule);
-
-		// D -> D always
-		
 	}
 	
 }
