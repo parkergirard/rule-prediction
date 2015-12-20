@@ -128,6 +128,7 @@ public class PhoneticEnvironment {
 
 	public void removeComesAfterPhoneme(PHONEME p) {
 		removeComesAfterFeatures(p.getPlace(), p.getManner(), p.getVoice());
+		comesAfterPhonemes.remove(p);
 		doesntComeAfterPhonemes.add(p);
 	}
 	
@@ -139,6 +140,7 @@ public class PhoneticEnvironment {
 
 	public void removeComesBeforePhoneme(PHONEME p) {
 		removeComesBeforeFeatures(p.getPlace(), p.getManner(), p.getVoice());
+		comesBeforePhonemes.remove(p);
 		doesntComeBeforePhonemes.add(p);
 	}
 
@@ -158,6 +160,7 @@ public class PhoneticEnvironment {
 			}
 			comesAfterPhonemes.add(p);
 		}
+		doesntComeAfterPhonemes.clear();
 		comesAfterFeatures.makePropertiesGlobal();
 	}
 	public void makeComesBeforeGlobal() {
@@ -169,6 +172,7 @@ public class PhoneticEnvironment {
 			}
 			comesBeforePhonemes.add(p);
 		}
+		doesntComeBeforePhonemes.clear();
 		comesBeforeFeatures.makePropertiesGlobal();
 	}
 	
@@ -182,6 +186,8 @@ public class PhoneticEnvironment {
 			comesAfterPhonemes.add(p);
 			comesBeforePhonemes.add(p);
 		}
+		doesntComeAfterPhonemes.clear();
+		doesntComeBeforePhonemes.clear();
 		comesAfterFeatures.makePropertiesGlobal();
 		comesBeforeFeatures.makePropertiesGlobal();
 	}

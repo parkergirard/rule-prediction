@@ -405,7 +405,20 @@ public class RulePrediction {
 	 * training set
 	 */
 	public void generalizeRules() {
-		
+		// only look at NON SELF TRANSFORMING GLOBAL RULES
+		for (Set<Rule> rs : phonemeToRules.values()) {
+			for (Rule r : rs) {
+				if (r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme())) {
+					// skip this rule because it is global and transforms to 
+					// itself
+					continue;
+				}
+				
+				// this rule either transforms to itself SOMETIMES, or
+				// transforms to a phoneme other than itself
+				
+			}
+		}
 	}
 
 	/**
