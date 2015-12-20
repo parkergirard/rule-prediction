@@ -131,7 +131,8 @@ public enum PHONEME {
 	@Override
 	public String toString() {
 		String str = "";
-		str += name() + ": " + group + ", " + manner + ", " + place + ", " + voice;
+		str += name();
+//		str += ": " + group + ", " + manner + ", " + place + ", " + voice;
 		return str;
 	}
 

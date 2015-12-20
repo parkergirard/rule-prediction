@@ -12,29 +12,9 @@ public class PhoneticEnvironment {
 
 	// sets of descriptions of sounds before/after the rule occurs
 	FeatureProperties comesAfterFeatures;
+	Set<PHONEME> comesAfterPhonemes;
 	FeatureProperties comesBeforeFeatures;
-	/**
-	 * 
-	 * @param wordPlacement: Is it at the beginning or end of a word?
-	 * @param syllablePlacement: Is it at the beginning or end of a syllable?
-	 * @param vowelPlacement: Is it before/after/surrounded by a vowel??
-	 * @param afterProperties: Descriptions of sounds after the rule occurs
-	 * @param beforeProperties: Descriptions of sounds before the rule occurs
-	 */
-	public PhoneticEnvironment(Set<POSITION> wordPlacement, 
-			Set<POSITION> syllablePlacement,
-			Set<POSITION> vowelPlacement, 
-			FeatureProperties afterProperties,
-			FeatureProperties beforeProperties) {
-		
-		this.wordPlacement = wordPlacement;
-		this.syllablePlacement = syllablePlacement;
-		this.vowelPlacement = vowelPlacement;
-
-		this.comesAfterFeatures = afterProperties;
-		this.comesBeforeFeatures = beforeProperties;
-		
-	}
+	Set<PHONEME> comesBeforePhonemes;
 	
 	public PhoneticEnvironment(boolean global) {
 		wordPlacement = new HashSet<POSITION>();
@@ -43,7 +23,14 @@ public class PhoneticEnvironment {
 		
 		comesAfterFeatures = new FeatureProperties();
 		comesBeforeFeatures = new FeatureProperties();
+
+		comesAfterPhonemes = new HashSet<PHONEME>();
+		comesBeforePhonemes = new HashSet<PHONEME>();
+		
 		if (global) {
+			
+			makeComesBeforeAndAfterGlobal();
+			
 			// comes at every placement
 			POSITION[] vals = CONSONANT_POSITION.values();
 			for (int i = 0; i < vals.length; i++) {
@@ -113,48 +100,23 @@ public class PhoneticEnvironment {
 		vowelPlacement.remove(p);
 	}
 
-	/**
-	 * If a param is null, it is ignored
-	 * @param p
-	 * @param m
-	 * @param v
-	 */
-	public void addComesAfterFeatures(PLACE p, MANNER m, VOICE v) {
-		comesAfterFeatures.add(p, m, v);
-	}
-	
 	public void addComesAfter(PHONEME p) {
-		addComesAfterFeatures(p.getPlace(), p.getManner(), p.getVoice());
+		comesAfterFeatures.add(p.getPlace(), p.getManner(), p.getVoice());
+		comesAfterPhonemes.add(p);
 	}
 
 	public FeatureProperties getComesAfterFeatures() {
 		return comesAfterFeatures;
 	}
 
-	/**
-	 * If a param is null, it is ignored
-	 * @param p
-	 * @param m
-	 * @param v
-	 */
-	public void addComesBeforeFeatures(PLACE p, MANNER m, VOICE v) {
-		comesBeforeFeatures.add(p, m, v);
-	}
 	
 	public void addComesBefore(PHONEME p) {
-		addComesBeforeFeatures(p.getPlace(), p.getManner(), p.getVoice());
+		comesBeforeFeatures.add(p.getPlace(), p.getManner(), p.getVoice());
+		comesBeforePhonemes.add(p);
 	}
 
 	public FeatureProperties getComesBeforeFeatures() {
 		return comesBeforeFeatures;
-	}
-
-
-	public void setComesAfterFeatures(PLACE place, MANNER manner, VOICE voice) {
-		comesAfterFeatures = new FeatureProperties(place, manner, voice);
-	}
-	public void setComesBeforeFeatures(PLACE place, MANNER manner, VOICE voice) {
-		comesBeforeFeatures = new FeatureProperties(place, manner, voice);
 	}
 	
 	@Override
@@ -193,6 +155,12 @@ public class PhoneticEnvironment {
 		sb.append("\nVowel Placements: ");
 		sb.append(getVowelPlacement());
 
+		sb.append("\nComes After PHONEMES\n");
+		sb.append(comesAfterPhonemes);
+		
+		sb.append("\nComes Before PHONEMES\n");
+		sb.append(comesBeforePhonemes);
+
 		sb.append("\nComes After Features\n");
 		sb.append(getComesAfterFeatures().toString());
 		
@@ -223,9 +191,39 @@ public class PhoneticEnvironment {
 	}
 
 	public void makeComesAfterGlobal() {
+		// can come after every phoneme
+		// (ignore vowels)
+		for (PHONEME p : PHONEME.values()) {
+			if (p.getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			comesAfterPhonemes.add(p);
+		}
 		comesAfterFeatures.makePropertiesGlobal();
 	}
 	public void makeComesBeforeGlobal() {
+		// can come before every phoneme
+		// (ignore vowels)
+		for (PHONEME p : PHONEME.values()) {
+			if (p.getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			comesBeforePhonemes.add(p);
+		}
+		comesBeforeFeatures.makePropertiesGlobal();
+	}
+	
+	public void makeComesBeforeAndAfterGlobal() {
+		// can come after and before every phoneme
+		// (ignore vowels)
+		for (PHONEME p : PHONEME.values()) {
+			if (p.getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			comesAfterPhonemes.add(p);
+			comesBeforePhonemes.add(p);
+		}
+		comesAfterFeatures.makePropertiesGlobal();
 		comesBeforeFeatures.makePropertiesGlobal();
 	}
 	

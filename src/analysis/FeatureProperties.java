@@ -108,17 +108,24 @@ public class FeatureProperties {
 	 * Sets all sets to contain every possibility
 	 */
 	public void makePropertiesGlobal() {
-		FEATURE[] vals = PLACE.values();
-		for (int i = 0; i < vals.length; i++) {
-			places.add((PLACE) vals[i]);
+		// places
+		PLACE[] ps = PLACE.values();
+		for (int i = 0; i < ps.length; i++) {
+			places.add((PLACE) ps[i]);
 		}
-		vals = MANNER.values();
-		for (int i = 0; i < vals.length; i++) {
-			manners.add((MANNER) vals[i]);
+		// manners
+		MANNER[] ms = MANNER.values();
+		for (int i = 0; i < ms.length; i++) {
+			// skip if vowel
+			if (ms[i].getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			manners.add((MANNER) ms[i]);
 		}
-		vals = VOICE.values();
-		for (int i = 0; i < vals.length; i++) {
-			voices.add((VOICE) vals[i]);
+		// voices
+		VOICE[] vs = VOICE.values();
+		for (int i = 0; i < vs.length; i++) {
+			voices.add((VOICE) vs[i]);
 		}
 	}
 	

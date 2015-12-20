@@ -29,29 +29,32 @@ public class Rule implements Comparable<Rule> {
 	 * @param transformsToProperties: What properties does it change to?
 	 */
 	public Rule(PhoneticEnvironment env,
-			FeatureProperties originalProperties,
-			FeatureProperties transformsToProperties) {
+			PHONEME targetPhoneme,
+			PHONEME actualPhoneme) {
+
+		this.targetPhoneme = targetPhoneme;
+		this.actualPhoneme = actualPhoneme;
 		
 		this.environment = env;
-		this.originalFeatures = originalProperties;
-		this.transformsToFeatures = transformsToProperties;
+		this.originalFeatures = targetPhoneme.getProperties();
+		this.transformsToFeatures = actualPhoneme.getProperties();
 	}
-	
 
 	/**
 	 * Construct a rule with info about
 	 * phonetic environment and info about
 	 * what sounds change
 	 * @param env: What phonetic environment does it occur in?
-	 * @param originalProperties: What properties does it change from?
-	 * @param transformsToProperties: What properties does it change to?
+	 * @param targetPhoneme: original phoneme
+	 * @param actualPhoneme: the original transformed into this one
 	 * @param globalEnv: makes a global phonetic environment if true
 	 */
-	public Rule(FeatureProperties originalProperties,
-			FeatureProperties transformsToProperties, boolean globalEnv) {
+	public Rule(PHONEME targetPhoneme, PHONEME actualPhoneme, boolean globalEnv) {
+		this.targetPhoneme = targetPhoneme;
+		this.actualPhoneme = actualPhoneme;
 		
-		this.originalFeatures = originalProperties;
-		this.transformsToFeatures = transformsToProperties;
+		this.originalFeatures = targetPhoneme.getProperties();
+		this.transformsToFeatures = actualPhoneme.getProperties();
 		this.environment = new PhoneticEnvironment(globalEnv);
 	}
 
@@ -113,7 +116,9 @@ public class Rule implements Comparable<Rule> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("Original Features\n");
+		sb.append(targetPhoneme.name() + " to " + actualPhoneme.name());
+		
+		sb.append("\nOriginal Features\n");
 		sb.append(originalFeatures.toString());
 		
 		sb.append("\nTransforms to Features\n");
