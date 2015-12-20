@@ -417,6 +417,8 @@ public class RulePrediction {
 				// this rule either transforms to itself SOMETIMES, or
 				// transforms to a phoneme other than itself
 				
+				
+				
 			}
 		}
 	}

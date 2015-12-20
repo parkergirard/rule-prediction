@@ -151,6 +151,21 @@ public class PhoneticEnvironment {
 		comesBeforeFeatures.removeVoicing(v);
 	}
 
+
+	public Set<PHONEME> getComesAfterPhonemes() {
+		return comesAfterPhonemes;
+	}
+	public Set<PHONEME> getComesBeforePhonemes() {
+		return comesBeforePhonemes;
+	}
+
+	public Set<PHONEME> getDoesntComeAfterPhonemes() {
+		return doesntComeAfterPhonemes;
+	}
+	public Set<PHONEME> getDoesntComeBeforePhonemes() {
+		return doesntComeBeforePhonemes;
+	}
+
 	public void makeComesAfterGlobal() {
 		// can come after every phoneme
 		// (ignore vowels)

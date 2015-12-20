@@ -41,6 +41,13 @@ public class RulePredictionTest {
 		}
 	}
 	
+	private Rule getGlobalRuleForPhonemes(PHONEME p1, PHONEME p2) {
+		// PHONEME -> PHONEME always
+		PhoneticEnvironment e = new PhoneticEnvironment(true);
+		Rule globalRule = new Rule(e, p1, p2);
+		return globalRule;
+	}
+	
 	@Test(expected=IllegalArgumentException.class)
 	public void testInvalidPhoneme() {
 		Map<String, String> map = new HashMap<String, String>();
@@ -476,20 +483,54 @@ public class RulePredictionTest {
 	}
 	
 	@Test
-	public void secondExamQuestion() {
+	public void testDoesntComeAfter() {
 			Map<String, String> map = new HashMap<String, String>();
-//			map.put("P-AA-T", "P-AA-T");
-//			map.put("T-AA-P", "T-AA-P");
-//			map.put("K-AE-T", "T-AE-T");
-//			map.put("B-AE-K", "B-AE-T");
-//			map.put("D-EY", "D-EY");
 			map.put("P-T", "T-T");
 			map.put("K-P", "K-P");
 			
 			RulePrediction rp = new RulePrediction(map);
 			
 			int size = rp.getRules().size();
-//			assertEquals(5, size);
+			assertEquals(3, size);
+			
+			// there's only one rule we care about (the none global)
+			for (Rule r : rp.getRules()) {
+
+				if (!(r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme()))) {
+					assertEquals(2, r.getEnvironment().getWordPlacement().size());
+					assertFalse(r.getEnvironment().getWordPlacement().contains(CONSONANT_POSITION.END));
+	
+					assertEquals(2, r.getEnvironment().getSyllablePlacement().size());
+					assertFalse(r.getEnvironment().getSyllablePlacement().contains(CONSONANT_POSITION.END));
+	
+					assertEquals(3, r.getEnvironment().getVowelPlacement().size());
+	
+					assertEquals(24, r.getEnvironment().getComesAfterPhonemes().size());
+					assertFalse(r.getEnvironment().getComesAfterPhonemes().contains(PHONEME.K));
+					
+					assertEquals(1, r.getEnvironment().getDoesntComeAfterPhonemes().size());
+					assertTrue(r.getEnvironment().getDoesntComeAfterPhonemes().contains(PHONEME.K));
+					
+					assertEquals(25, r.getEnvironment().getComesBeforePhonemes().size());
+					
+					assertEquals(0, r.getEnvironment().getDoesntComeBeforePhonemes().size());
+				}
+			}
+	}
+	
+	@Test
+	public void secondExamQuestion() {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("P-AA-T", "P-AA-T");
+			map.put("T-AA-P", "T-AA-P");
+			map.put("K-AE-T", "T-AE-T");
+			map.put("B-AE-K", "B-AE-T");
+			map.put("D-EY", "D-EY");
+			
+			RulePrediction rp = new RulePrediction(map);
+			
+			int size = rp.getRules().size();
+			assertEquals(5, size);
 			
 			
 			Set<Rule> expectedRules = new HashSet<Rule>();
@@ -503,13 +544,6 @@ public class RulePredictionTest {
 			printRules(rp.getRules(), false);
 			
 			assertTrue(rp.getRules().containsAll(expectedRules));
-	}
-	
-	private Rule getGlobalRuleForPhonemes(PHONEME p1, PHONEME p2) {
-		// PHONEME -> PHONEME always
-		PhoneticEnvironment e = new PhoneticEnvironment(true);
-		Rule globalRule = new Rule(e, p1, p2);
-		return globalRule;
 	}
 	
 }
