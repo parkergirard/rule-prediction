@@ -2,9 +2,7 @@ package tests;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import analysis.*;
 import enums.*;
@@ -76,6 +74,7 @@ public class RuleGeneralizationTest {
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		
 		Collection<GeneralizedRule> rules = rg.getGeneralizedRules();
+		assertEquals(1, rules.size());
 //		GeneralizedRule.printRules(rules);
 	}
 	
@@ -98,6 +97,9 @@ public class RuleGeneralizationTest {
 		
 		Collection<GeneralizedRule> rules = rg.getGeneralizedRules();
 		GeneralizedRule.printRules(rules);
+		assertEquals(3, rules.size());
+		
+		// L, R -> W, all consonants at end of word -> Voiceless
 		
 		// IT WORKS!
 	}
