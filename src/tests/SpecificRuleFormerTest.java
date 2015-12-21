@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import enums.*;
 
-public class RulePredictionTest {
+public class SpecificRuleFormerTest {
 
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -35,38 +35,38 @@ public class RulePredictionTest {
 		
 		assertEquals(8, rp.getRules().size());
 		
-		Set<Rule> expectedRules = new HashSet<Rule>();
+		Set<SpecificRule> expectedRules = new HashSet<SpecificRule>();
 		
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
 		
-		Rule newRule = 
-				new Rule(e, PHONEME.L, PHONEME.L);
+		SpecificRule newRule = 
+				new SpecificRule(e, PHONEME.L, PHONEME.L);
 		expectedRules.add(newRule);
 		
 
 		newRule = 
-				new Rule(e, PHONEME.D, PHONEME.D);
+				new SpecificRule(e, PHONEME.D, PHONEME.D);
 		expectedRules.add(newRule);
 
 
 		newRule = 
-				new Rule(e, PHONEME.R, PHONEME.W);
+				new SpecificRule(e, PHONEME.R, PHONEME.W);
 		expectedRules.add(newRule);
 		
 		newRule = 
-				new Rule(e, PHONEME.JH, PHONEME.JH);
+				new SpecificRule(e, PHONEME.JH, PHONEME.JH);
 		expectedRules.add(newRule);
 
 		newRule = 
-				new Rule(e, PHONEME.F, PHONEME.F);
+				new SpecificRule(e, PHONEME.F, PHONEME.F);
 		expectedRules.add(newRule);
 
 		newRule = 
-				new Rule(e, PHONEME.S, PHONEME.S);
+				new SpecificRule(e, PHONEME.S, PHONEME.S);
 		expectedRules.add(newRule);
 
 		newRule = 
-				new Rule(e, PHONEME.T, PHONEME.T);
+				new SpecificRule(e, PHONEME.T, PHONEME.T);
 		expectedRules.add(newRule);
 		
 		assertTrue(rp.getRules().containsAll(expectedRules));
@@ -87,32 +87,32 @@ public class RulePredictionTest {
 		assertTrue(size == 8 || size == 9 || size == 10 );
 		
 		
-		Set<Rule> expectedRules = new HashSet<Rule>();
+		Set<SpecificRule> expectedRules = new HashSet<SpecificRule>();
 		
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
 			
 		// K -> K always
 		e = new PhoneticEnvironment(true);
-		Rule newRule = 
-				new Rule(e, PHONEME.K, PHONEME.K);
+		SpecificRule newRule = 
+				new SpecificRule(e, PHONEME.K, PHONEME.K);
 		expectedRules.add(newRule);
 
 		// B -> B always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.B, PHONEME.B);
+				new SpecificRule(e, PHONEME.B, PHONEME.B);
 		expectedRules.add(newRule);
 		
 		// P -> P always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.P, PHONEME.P);
+				new SpecificRule(e, PHONEME.P, PHONEME.P);
 		expectedRules.add(newRule);
 
 		// L -> L always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.L, PHONEME.L);
+				new SpecificRule(e, PHONEME.L, PHONEME.L);
 		expectedRules.add(newRule);
 		
 		assertTrue(rp.getRules().containsAll(expectedRules));
@@ -130,7 +130,7 @@ public class RulePredictionTest {
 		syllable/before a vowel/after anything/before anything} 
 		 */
 		// reset expected
-		expectedRules = new HashSet<Rule>();
+		expectedRules = new HashSet<SpecificRule>();
 		// S → S always, except at the beginning of a word/beginning of a 
 		// syllable/before a vowel
 		e = new PhoneticEnvironment(true);
@@ -138,7 +138,7 @@ public class RulePredictionTest {
 		e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
 		e.removeVowelPlacement(VOWEL_POSITION.BEFORE);
 		newRule = 
-				new Rule(e, PHONEME.S, PHONEME.S);
+				new SpecificRule(e, PHONEME.S, PHONEME.S);
 		expectedRules.add(newRule);
 
 		// S → TH at the beginning of a word/beginning of a 
@@ -150,7 +150,7 @@ public class RulePredictionTest {
 		e.makeComesAfterGlobal();
 		e.makeComesBeforeGlobal();
 		newRule = 
-				new Rule(e, PHONEME.S, PHONEME.TH);
+				new SpecificRule(e, PHONEME.S, PHONEME.TH);
 		expectedRules.add(newRule);
 		
 		firstOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -163,7 +163,7 @@ public class RulePredictionTest {
 			 * syllable/after a vowel/before “T”}
 			 */
 			
-			expectedRules = new HashSet<Rule>();
+			expectedRules = new HashSet<SpecificRule>();
 
 			e = new PhoneticEnvironment(true);
 			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
@@ -171,7 +171,7 @@ public class RulePredictionTest {
 			e.removeVowelPlacement(VOWEL_POSITION.AFTER);
 			e.removeComesBeforePhoneme(PHONEME.T);
 			newRule = 
-					new Rule(e, PHONEME.S, PHONEME.TH);
+					new SpecificRule(e, PHONEME.S, PHONEME.TH);
 			expectedRules.add(newRule);
 			
 			secondOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -192,7 +192,7 @@ public class RulePredictionTest {
 			word/beginning of a syllable/before a vowel}
 		 */
 		// reset expected
-		expectedRules = new HashSet<Rule>();
+		expectedRules = new HashSet<SpecificRule>();
 		
 		// Z → DH at the beginning of the word/beginning 
 		// of a syllable/before a vowel/after everything/before everything
@@ -203,7 +203,7 @@ public class RulePredictionTest {
 		e.makeComesAfterGlobal();
 		e.makeComesBeforeGlobal();
 		newRule = 
-				new Rule(e, PHONEME.Z, PHONEME.DH);
+				new SpecificRule(e, PHONEME.Z, PHONEME.DH);
 		expectedRules.add(newRule);
 		
 		// Z → Z always, except at the beginning of the
@@ -213,7 +213,7 @@ public class RulePredictionTest {
 		e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
 		e.removeVowelPlacement(VOWEL_POSITION.BEFORE);
 		newRule = 
-				new Rule(e, PHONEME.Z, PHONEME.Z);
+				new SpecificRule(e, PHONEME.Z, PHONEME.Z);
 		expectedRules.add(newRule);
 		
 		firstOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -226,14 +226,14 @@ public class RulePredictionTest {
 			 * of a syllable/after a vowel}
 			 */
 
-			expectedRules = new HashSet<Rule>();
+			expectedRules = new HashSet<SpecificRule>();
 
 			e = new PhoneticEnvironment(true);
 			e.removeWordPlacement(CONSONANT_POSITION.END);
 			e.removeSyllablePlacement(CONSONANT_POSITION.END);
 			e.removeVowelPlacement(VOWEL_POSITION.AFTER);
 			newRule = 
-					new Rule(e, PHONEME.Z, PHONEME.DH);
+					new SpecificRule(e, PHONEME.Z, PHONEME.DH);
 			expectedRules.add(newRule);
 			
 			secondOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -268,49 +268,49 @@ public class RulePredictionTest {
 		
 		assertTrue(size == 9 || size == 10 || size == 11);
 
-		Set<Rule> expectedRules = new HashSet<Rule>();
+		Set<SpecificRule> expectedRules = new HashSet<SpecificRule>();
 
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
 
 		// D -> D always
-		Rule newRule = 
-				new Rule(e, PHONEME.D, PHONEME.D);
+		SpecificRule newRule = 
+				new SpecificRule(e, PHONEME.D, PHONEME.D);
 		expectedRules.add(newRule);
 
 		// K -> K always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.K, PHONEME.K);
+				new SpecificRule(e, PHONEME.K, PHONEME.K);
 		expectedRules.add(newRule);
 
 		// P -> P always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.P, PHONEME.P);
+				new SpecificRule(e, PHONEME.P, PHONEME.P);
 		expectedRules.add(newRule);
 
 		// R -> W always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.R, PHONEME.W);
+				new SpecificRule(e, PHONEME.R, PHONEME.W);
 		expectedRules.add(newRule);
 
 		// S -> S always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.S, PHONEME.S);
+				new SpecificRule(e, PHONEME.S, PHONEME.S);
 		expectedRules.add(newRule);
 
 		// L -> W always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.L, PHONEME.W);
+				new SpecificRule(e, PHONEME.L, PHONEME.W);
 		expectedRules.add(newRule);
 		
 		// NG -> NG always
 		e = new PhoneticEnvironment(true);
 		newRule = 
-				new Rule(e, PHONEME.NG, PHONEME.NG);
+				new SpecificRule(e, PHONEME.NG, PHONEME.NG);
 		expectedRules.add(newRule);
 		
 		
@@ -329,7 +329,7 @@ public class RulePredictionTest {
 		 * }
 		 */
 		// reset expected
-		expectedRules = new HashSet<Rule>();
+		expectedRules = new HashSet<SpecificRule>();
 		// G → G always, except at the end of a word/end of 
 		// a syllable/after vowel
 		e = new PhoneticEnvironment(true);
@@ -337,7 +337,7 @@ public class RulePredictionTest {
 		e.removeSyllablePlacement(CONSONANT_POSITION.END);
 		e.removeVowelPlacement(VOWEL_POSITION.AFTER);
 		newRule = 
-				new Rule(e, PHONEME.G, PHONEME.G);
+				new SpecificRule(e, PHONEME.G, PHONEME.G);
 		expectedRules.add(newRule);
 
 		// G → K at the end of a word/end of a syllable/after vowel/after anything
@@ -349,7 +349,7 @@ public class RulePredictionTest {
 		e.makeComesAfterGlobal();
 		e.makeComesBeforeGlobal();
 		newRule = 
-				new Rule(e, PHONEME.G, PHONEME.K);
+				new SpecificRule(e, PHONEME.G, PHONEME.K);
 		expectedRules.add(newRule);
 		
 		firstOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -362,14 +362,14 @@ public class RulePredictionTest {
 			 * of a syllable/surrounded by vowels
 			 */
 			
-			expectedRules = new HashSet<Rule>();
+			expectedRules = new HashSet<SpecificRule>();
 
 			e = new PhoneticEnvironment(true);
 			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
 			e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
 			e.removeVowelPlacement(VOWEL_POSITION.SURROUNDED_BY);
 			newRule = 
-					new Rule(e, PHONEME.G, PHONEME.K);
+					new SpecificRule(e, PHONEME.G, PHONEME.K);
 			expectedRules.add(newRule);
 			
 			secondOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -392,7 +392,7 @@ public class RulePredictionTest {
 		/after anything/before anything
 		 */
 		// reset expected
-		expectedRules = new HashSet<Rule>();
+		expectedRules = new HashSet<SpecificRule>();
 		
 		//  B → B always, except at the end of a word/at the end
 		//  of a syllable/after vowel
@@ -401,7 +401,7 @@ public class RulePredictionTest {
 		e.removeSyllablePlacement(CONSONANT_POSITION.END);
 		e.removeVowelPlacement(VOWEL_POSITION.AFTER);
 		newRule = 
-				new Rule(e, PHONEME.B, PHONEME.B);
+				new SpecificRule(e, PHONEME.B, PHONEME.B);
 		expectedRules.add(newRule);
 		
 		// B → P at the end of a word/at the end of a syllable/after vowel
@@ -413,7 +413,7 @@ public class RulePredictionTest {
 		e.makeComesAfterGlobal();
 		e.makeComesBeforeGlobal();
 		newRule = 
-				new Rule(e, PHONEME.B, PHONEME.P);
+				new SpecificRule(e, PHONEME.B, PHONEME.P);
 		expectedRules.add(newRule);
 		
 		firstOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -426,14 +426,14 @@ public class RulePredictionTest {
 			 * of a syllable/surrounded by vowels
 			 */
 
-			expectedRules = new HashSet<Rule>();
+			expectedRules = new HashSet<SpecificRule>();
 
 			e = new PhoneticEnvironment(true);
 			e.removeWordPlacement(CONSONANT_POSITION.MIDDLE);
 			e.removeSyllablePlacement(CONSONANT_POSITION.BEGINNING);
 			e.removeVowelPlacement(VOWEL_POSITION.SURROUNDED_BY);
 			newRule = 
-					new Rule(e, PHONEME.B, PHONEME.P);
+					new SpecificRule(e, PHONEME.B, PHONEME.P);
 			expectedRules.add(newRule);
 			
 			secondOptionIsRight = rp.getRules().containsAll(expectedRules);
@@ -461,7 +461,7 @@ public class RulePredictionTest {
 			assertEquals(3, size);
 			
 			// there's only one rule we care about (the none global)
-			for (Rule r : rp.getRules()) {
+			for (SpecificRule r : rp.getRules()) {
 
 				if (!(r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme()))) {
 					assertEquals(2, r.getEnvironment().getWordPlacement().size());
@@ -500,13 +500,13 @@ public class RulePredictionTest {
 			assertEquals(5, size);
 			
 			
-			Set<Rule> expectedRules = new HashSet<Rule>();
+			Set<SpecificRule> expectedRules = new HashSet<SpecificRule>();
 			
-			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.P, PHONEME.P));
-			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.T, PHONEME.T));
-			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.K, PHONEME.T));
-			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.B, PHONEME.B));
-			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.D, PHONEME.D));
+			expectedRules.add(SpecificRule.getGlobalRuleForPhonemes(PHONEME.P, PHONEME.P));
+			expectedRules.add(SpecificRule.getGlobalRuleForPhonemes(PHONEME.T, PHONEME.T));
+			expectedRules.add(SpecificRule.getGlobalRuleForPhonemes(PHONEME.K, PHONEME.T));
+			expectedRules.add(SpecificRule.getGlobalRuleForPhonemes(PHONEME.B, PHONEME.B));
+			expectedRules.add(SpecificRule.getGlobalRuleForPhonemes(PHONEME.D, PHONEME.D));
 			
 			assertTrue(rp.getRules().containsAll(expectedRules));
 	}

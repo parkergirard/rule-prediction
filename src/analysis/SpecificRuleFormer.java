@@ -17,7 +17,7 @@ public class SpecificRuleFormer {
 
 	// maps a phoneme to a set of rules for that phoneme
 	// (the rules alter in phonetic environments)
-	private Map<PHONEME, Set<Rule>> phonemeToRules;
+	private Map<PHONEME, Set<SpecificRule>> phonemeToRules;
 
 	/**
 	 * Construct given a map of strings,
@@ -44,7 +44,7 @@ public class SpecificRuleFormer {
 					targetToPronunciation.put(target, val);
 				}
 
-				phonemeToRules = new HashMap<PHONEME, Set<Rule>>();
+				phonemeToRules = new HashMap<PHONEME, Set<SpecificRule>>();
 				formRules();
 	}
 
@@ -129,7 +129,7 @@ public class SpecificRuleFormer {
 
 					if (!targetPhoneme.getGroup().equals(GROUP.VOWEL)) {
 						// get rules for this phoneme
-						Set<Rule> rulesForPhoneme = 
+						Set<SpecificRule> rulesForPhoneme = 
 								phonemeToRules.get(targetPhoneme);
 
 						// If target phoneme and actual phoneme are the same:
@@ -161,7 +161,7 @@ public class SpecificRuleFormer {
 	}
 
 	private void updateRulesIfTransformToOther(PHONEME targetPhoneme, 
-			PHONEME actualPhoneme, Set<Rule> rulesForPhoneme,
+			PHONEME actualPhoneme, Set<SpecificRule> rulesForPhoneme,
 			POSITION wordPosition, POSITION syllablePosition, POSITION vowelPosition,
 			PHONEME previousPhoneme, PHONEME nextPhoneme) {
 
@@ -171,7 +171,7 @@ public class SpecificRuleFormer {
 
 		if (rulesForPhoneme != null) {
 			// go through every rule for this phoneme
-			for (Rule r : rulesForPhoneme) {
+			for (SpecificRule r : rulesForPhoneme) {
 
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
@@ -221,17 +221,17 @@ public class SpecificRuleFormer {
 
 		if (!existsRuleFromTargetToActual) {
 			// we have to add a rule
-			Rule newRule = null;
+			SpecificRule newRule = null;
 
 			if (rulesForPhoneme == null) {
 				// there are no rules for this phoneme
 				// make the rule global
-				newRule = new Rule(targetPhoneme, actualPhoneme, true);
+				newRule = new SpecificRule(targetPhoneme, actualPhoneme, true);
 			} else {
 				// there are rules for this phoneme
 				// make a rule just for this phonetic environment
 				// (but globally after/before)
-				newRule = new Rule(targetPhoneme, actualPhoneme, false);
+				newRule = new SpecificRule(targetPhoneme, actualPhoneme, false);
 
 				// construct the phonetic environment
 				PhoneticEnvironment env = new PhoneticEnvironment(false);
@@ -243,9 +243,9 @@ public class SpecificRuleFormer {
 
 			}
 
-			Set<Rule> set = phonemeToRules.get(targetPhoneme);
+			Set<SpecificRule> set = phonemeToRules.get(targetPhoneme);
 			if (set == null) {
-				set = new HashSet<Rule>();
+				set = new HashSet<SpecificRule>();
 			}
 			set.add(newRule);
 			phonemeToRules.put(targetPhoneme, set);
@@ -254,7 +254,7 @@ public class SpecificRuleFormer {
 
 	}
 
-	private void updateRulesIfTransformToSelf(PHONEME targetPhoneme, Set<Rule> rulesForPhoneme,
+	private void updateRulesIfTransformToSelf(PHONEME targetPhoneme, Set<SpecificRule> rulesForPhoneme,
 			POSITION wordPosition, POSITION syllablePosition, POSITION vowelPosition,
 			PHONEME previousPhoneme, PHONEME nextPhoneme) {
 
@@ -266,16 +266,16 @@ public class SpecificRuleFormer {
 		if (rulesForPhoneme == null) {
 			// construct global rule with this transformation 
 			// make the rule (and make it global)
-			Rule newRule = new Rule(targetPhoneme, targetPhoneme, true);
+			SpecificRule newRule = new SpecificRule(targetPhoneme, targetPhoneme, true);
 			// add rule to new set
-			Set<Rule> set = new HashSet<Rule>();
+			Set<SpecificRule> set = new HashSet<SpecificRule>();
 			set.add(newRule);
 			// put new rule in map
 			phonemeToRules.put(targetPhoneme, set);
 		} else {
 			// rules exist
 			// go through every rule for this phoneme
-			for (Rule r : rulesForPhoneme) {
+			for (SpecificRule r : rulesForPhoneme) {
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 
@@ -384,9 +384,9 @@ public class SpecificRuleFormer {
 
 	}
 
-	public Set<Rule> getRules() {
-		Set<Rule> rules = new HashSet<Rule>();
-		for (Set<Rule> rs : phonemeToRules.values()) {
+	public Set<SpecificRule> getRules() {
+		Set<SpecificRule> rules = new HashSet<SpecificRule>();
+		for (Set<SpecificRule> rs : phonemeToRules.values()) {
 			rules.addAll(rs);
 		}
 		return rules;

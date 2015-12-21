@@ -24,15 +24,8 @@ public class RuleGeneralizationTest {
 			map.put("D-EY", "D-EY");
 			
 			SpecificRuleFormer rp = new SpecificRuleFormer(map);
+			RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 			
-			int size = rp.getRules().size();
-			assertEquals(1, size);
-			
-			
-			Set<Rule> expectedRules = new HashSet<Rule>();
-			
-			
-			assertTrue(rp.getRules().containsAll(expectedRules));
 	}
 
 }

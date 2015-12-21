@@ -8,7 +8,7 @@ import enums.*;
  * Rule has information about phonetic environment, and
  * about what sounds change
  */
-public class Rule {
+public class SpecificRule {
 	
 	PhoneticEnvironment environment;
 	
@@ -24,7 +24,7 @@ public class Rule {
 	 * @param originalProperties: What properties does it change from?
 	 * @param transformsToProperties: What properties does it change to?
 	 */
-	public Rule(PhoneticEnvironment env,
+	public SpecificRule(PhoneticEnvironment env,
 			PHONEME targetPhoneme,
 			PHONEME actualPhoneme) {
 
@@ -44,7 +44,7 @@ public class Rule {
 	 * @param actualPhoneme: the original transformed into this one
 	 * @param globalEnv: makes a global phonetic environment if true
 	 */
-	public Rule(PHONEME targetPhoneme, PHONEME actualPhoneme, boolean globalEnv) {
+	public SpecificRule(PHONEME targetPhoneme, PHONEME actualPhoneme, boolean globalEnv) {
 		this.targetPhoneme = targetPhoneme;
 		this.actualPhoneme = actualPhoneme;
 		
@@ -57,14 +57,14 @@ public class Rule {
 	 * @param global: whether or not to make rule apply to all
 	 * phonetic environments
 	 */
-	public Rule(boolean global) {
+	public SpecificRule(boolean global) {
 		init(global);
 	}
 	
 	/**
 	 * If not specified, assume global rule
 	 */
-	public Rule() {
+	public SpecificRule() {
 		init(true);
 	}
 	
@@ -134,7 +134,7 @@ public class Rule {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Rule r = (Rule) o;
+        SpecificRule r = (SpecificRule) o;
         return targetPhoneme.equals(r.targetPhoneme) &&
         		actualPhoneme.equals(r.actualPhoneme) &&
         		environment.equals(r.environment);
@@ -147,19 +147,19 @@ public class Rule {
     }
 
 	
-	public static Rule getGlobalRuleForPhonemes(PHONEME p1, PHONEME p2) {
+	public static SpecificRule getGlobalRuleForPhonemes(PHONEME p1, PHONEME p2) {
 		// PHONEME -> PHONEME always
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
-		Rule globalRule = new Rule(e, p1, p2);
+		SpecificRule globalRule = new SpecificRule(e, p1, p2);
 		return globalRule;
 	}
 	
 	@SuppressWarnings("unused")
-	public static void printRules(Set<Rule> rules) {
+	public static void printRules(Set<SpecificRule> rules) {
 		printRules(rules, true);
 	}
 	
-	public static void printRules(Set<Rule> rules, boolean printSelfTransformingGlobals) {
+	public static void printRules(Set<SpecificRule> rules, boolean printSelfTransformingGlobals) {
 		String str = "";
 		if (printSelfTransformingGlobals) {
 			str = "RULES";
@@ -169,7 +169,7 @@ public class Rule {
 		System.out.println("\n ******" + str + " ****");
 		
 		int count = 0;
-		for (Rule r : rules) {
+		for (SpecificRule r : rules) {
 			if (r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme()) 
 					&& !printSelfTransformingGlobals) {
 				continue;
