@@ -90,7 +90,13 @@ public enum PHONEME {
 		this.place = place;
 		this.voice = voice;
 	}
-	
+
+	PHONEME(GROUP group, MANNER manner, PLACE place, VOICE voice, PHONEME contrast) {
+		this.group = group;
+		this.manner = manner;
+		this.place = place;
+		this.voice = voice;
+	}
 	
 	public FeatureProperties getProperties() {
 		return new FeatureProperties(place, manner, voice);

@@ -72,12 +72,12 @@ public class RuleGeneralizationTest {
 		
 		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
-//		SpecificRule.printRules(rp.getRules());
+		System.out.println(CONTRASTING_PHONEME.valueOf(PHONEME.P.name()));
 		
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		
 		Collection<GeneralizedRule> rules = rg.getGeneralizedRules();
-		GeneralizedRule.printRules(rules);
+//		GeneralizedRule.printRules(rules);
 	}
 
 }
