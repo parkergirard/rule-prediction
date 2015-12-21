@@ -4,11 +4,57 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import analysis.PhonemeSequence;
 import enums.GROUP;
 import enums.PHONEME;
 
-public class SetHelpers {
+public class Helpers {
 
+
+	/**
+	 * Convert string to phoneme sequence
+	 * @param str: a string of phonemes, separated by "-" 's for phonemes
+	 * and " " for syllables
+	 * @return the phoneme sequence separated by syllables
+	 * ie: "P-AR K-ER" -> {P-AR, K-ER} (as phonemes)
+	 */
+	public static PhonemeSequence[] convertStringToPhonemeSequence(String str) {
+		if (str == null) {
+			throw new IllegalArgumentException("String cannot be null.");
+		}
+
+		// split by syllable
+		String[] syllables = str.split(" ");
+
+		PhonemeSequence[] phonemes = new PhonemeSequence[syllables.length];
+
+		for (int i = 0; i < syllables.length; i++) {
+			String syllable = syllables[i];
+			// split by - to get each phoneme
+			String[] stringArray = syllable.split("-");
+			PhonemeSequence phonemesSeq = new PhonemeSequence();
+			// loop through phonemes in string
+			for (int j = 0; j < stringArray.length; j++) {
+				// turn this phoneme string into a PHONEME
+				PHONEME p = null;
+				// make sure phoneme exists
+				try {
+					p = PHONEME.valueOf(stringArray[j]);
+				} catch (Exception e) {
+					throw new IllegalArgumentException(stringArray[j] + 
+							" is not a valid phoneme (in " + syllable + ")");
+				}
+				// phoneme exists. add to sequence
+				phonemesSeq.add(p);
+			}
+
+			phonemes[i] = phonemesSeq;
+
+		}
+
+		return phonemes;
+	}
+	
 	/**
 	 * Helper function which when given a set of sets,
 	 * returns one maximal set, such that each element

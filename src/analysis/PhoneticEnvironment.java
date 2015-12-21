@@ -1,6 +1,6 @@
 package analysis;
 
-import helpers.SetHelpers;
+import helpers.Helpers;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -111,21 +111,34 @@ public class PhoneticEnvironment {
 		vowelPlacement.remove(p);
 	}
 
-	public void addComesAfter(PHONEME p) {
+	public void addComesAfterPhoneme(PHONEME p) {
+		
+		// if there are no phonemes that the rule comes after,
+		// then in order to maintain balance, add every phoneme to
+		// what the rule doesn't come after (and remove it later)
+		if (comesAfterPhonemes.size() == 0) {
+			makeDoesntComeAfterGlobal();
+		}
+		
 		comesAfterPhonemes.add(p);
 		doesntComeAfterPhonemes.remove(p);
 
 		assertComesAndDoesntComeAddUp(comesAfterPhonemes, doesntComeAfterPhonemes);
 	}
 
+	public void addComesBeforePhoneme(PHONEME p) {
 
-	
-	public void addComesBefore(PHONEME p) {
+		// if there are no phonemes that the rule comes before,
+		// then in order to maintain balance, add every phoneme to
+		// what the rule doesn't come before (and remove it later)
+		if (comesBeforePhonemes.size() == 0) {
+			makeDoesntComeBeforeGlobal();
+		}
+		
 		comesBeforePhonemes.add(p);
 		doesntComeBeforePhonemes.remove(p);
 		assertComesAndDoesntComeAddUp(comesBeforePhonemes, doesntComeBeforePhonemes);
 	}
-
 
 	public void removeComesAfterPhoneme(PHONEME p) {
 		comesAfterPhonemes.remove(p);
@@ -137,6 +150,32 @@ public class PhoneticEnvironment {
 		comesBeforePhonemes.remove(p);
 		doesntComeBeforePhonemes.add(p);
 		assertComesAndDoesntComeAddUp(comesBeforePhonemes, doesntComeBeforePhonemes);
+	}
+	
+	/**
+	 * Whether or not this environment applies for a given environment
+	 * @param e: the given environment
+	 * @param ignoreDoesntCome: whether or not to check if doesntComeAfter/Before contains
+	 * the other environment's
+	 * @return true if all aspects of this environment contains all aspects
+	 * of the given environment (ignoring doesnt come after/before)
+	 */
+	public boolean containsEnvironment(PhoneticEnvironment e, boolean ignoreDoesntCome) {
+		boolean contains = 
+				wordPlacement.containsAll(e.getWordPlacement()) &&
+				syllablePlacement.containsAll(e.getSyllablePlacement()) &&
+				vowelPlacement.containsAll(e.getVowelPlacement()) &&
+				comesAfterPhonemes.containsAll(e.getComesAfterPhonemes()) &&
+				comesBeforePhonemes.containsAll(e.getComesBeforePhonemes());
+		
+		if (ignoreDoesntCome) {
+			return contains;
+		}
+		
+		return contains && 
+				doesntComeAfterPhonemes.containsAll(e.getDoesntComeAfterPhonemes()) &&
+				doesntComeBeforePhonemes.containsAll(e.getDoesntComeBeforePhonemes());
+		
 	}
 
 	private void assertComesAndDoesntComeAddUp(Set<PHONEME> s1, Set<PHONEME> s2) {
@@ -160,14 +199,14 @@ public class PhoneticEnvironment {
 	public void setComesAfterPhonemes(Set<PHONEME> set) {
 		this.comesAfterPhonemes = set;
 		doesntComeAfterPhonemes =
-				SetHelpers.getSet1MinusSet2(PHONEME.values(), comesAfterPhonemes);
+				Helpers.getSet1MinusSet2(PHONEME.values(), comesAfterPhonemes);
 		assertComesAndDoesntComeAddUp(comesAfterPhonemes, doesntComeAfterPhonemes);
 		
 	}
 	public void setComesBeforePhonemes(Set<PHONEME> set) {
 		this.comesBeforePhonemes = set;
 		doesntComeBeforePhonemes =
-				SetHelpers.getSet1MinusSet2(PHONEME.values(), comesBeforePhonemes);
+				Helpers.getSet1MinusSet2(PHONEME.values(), comesBeforePhonemes);
 		assertComesAndDoesntComeAddUp(comesBeforePhonemes, doesntComeBeforePhonemes);
 	}
 
@@ -207,6 +246,31 @@ public class PhoneticEnvironment {
 			comesBeforePhonemes.add(p);
 		}
 		doesntComeBeforePhonemes.clear();
+	}
+
+
+	public void makeDoesntComeAfterGlobal() {
+		// can come after every phoneme
+		// (ignore vowels)
+		for (PHONEME p : PHONEME.values()) {
+			if (p.getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			doesntComeAfterPhonemes.add(p);
+		}
+		comesAfterPhonemes.clear();
+	}
+
+	public void makeDoesntComeBeforeGlobal() {
+		// can come after every phoneme
+		// (ignore vowels)
+		for (PHONEME p : PHONEME.values()) {
+			if (p.getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			doesntComeBeforePhonemes.add(p);
+		}
+		comesBeforePhonemes.clear();
 	}
 	
 	public void makeComesBeforeAndAfterGlobal() {

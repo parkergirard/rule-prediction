@@ -13,7 +13,7 @@ public class GeneralizedRule {
 	// phoneme features (place/manner/voice)
 	private Set<FEATURE_TYPE> remainsSame;
 	
-	private PhoneticEnvironment env;
+	private PhoneticEnvironment ruleEnv;
 	
 	/**
 	 * Construct an "empty" generalized rule
@@ -26,7 +26,7 @@ public class GeneralizedRule {
 		this.inputPhonemeFeatures = inputPhonemeFeatures;
 		this.outputPhonemeFeatures = outputPhonemeFeatures;
 		this.remainsSame = remainsSame;
-		this.env = env;
+		this.ruleEnv = env;
 	}
 
 	public FeatureProperties getInputPhonemeFeatures() {
@@ -46,11 +46,35 @@ public class GeneralizedRule {
 	}
 
 	public PhoneticEnvironment getPhoneticEnvironment() {
-		return env;
+		return ruleEnv;
 	}
 
 	public void setPhoneticEnvironment(PhoneticEnvironment env) {
-		this.env = env;
+		this.ruleEnv = env;
+	}
+	
+	/**
+	 * Whether or not this rule applies to a given phoneme
+	 * @param p: the phoneme
+	 * @return true if all of the rule's 
+	 * 	input features contain all of p's features
+	 */
+	public boolean appliesToPhoneme(PHONEME p) {
+		return inputPhonemeFeatures.getPlaces().contains(p.getPlace()) &&
+				inputPhonemeFeatures.getManners().contains(p.getManner()) &&
+						inputPhonemeFeatures.getVoices().contains(p.getVoice());
+	}
+	
+	/**
+	 * Whether or not this rule applies to a given environment
+	 * @param e: the environment
+	 * @param ignoreDoesntCome: whether or not to check if doesntComeAfter/Before contains
+	 * the other environment's
+	 * @return true if all aspects of the rule's environment contain all aspects
+	 * of the environment
+	 */
+	public boolean appliesToEnvironment(PhoneticEnvironment e, boolean ignoreDoesntCome) {
+		return ruleEnv.containsEnvironment(e, ignoreDoesntCome);
 	}
 
 	@Override
@@ -68,14 +92,14 @@ public class GeneralizedRule {
         return inputPhonemeFeatures.equals(r.inputPhonemeFeatures) &&
         		outputPhonemeFeatures.equals(r.outputPhonemeFeatures) &&
         		remainsSame.equals(r.remainsSame) &&
-        		env.equals(r.env);
+        		ruleEnv.equals(r.ruleEnv);
     }
 
     @Override
     public int hashCode() {
         return inputPhonemeFeatures.hashCode() +
         		outputPhonemeFeatures.hashCode() + Objects.hash(remainsSame)
-        		+ env.hashCode();
+        		+ ruleEnv.hashCode();
     }
     
     @Override
@@ -92,7 +116,7 @@ public class GeneralizedRule {
 		sb.append(remainsSame.toString());
 		
 		sb.append("\n\n***PHONETIC ENV***\n");
-		sb.append(env.toString());
+		sb.append(ruleEnv.toString());
 		
 		return sb.toString();
 	}

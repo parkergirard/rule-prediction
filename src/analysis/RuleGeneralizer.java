@@ -1,7 +1,7 @@
 package analysis;
 
 import enums.*;
-import helpers.SetHelpers;
+import helpers.Helpers;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -143,22 +143,22 @@ public class RuleGeneralizer {
 						existingGenRule.getPhoneticEnvironment();
 
 				newEnv.setWordPlacement(
-						SetHelpers.getIntersectionOfSets(existingGenRuleEnv.getWordPlacement(),
+						Helpers.getIntersectionOfSets(existingGenRuleEnv.getWordPlacement(),
 								currentEnv.getWordPlacement())
 						);
 
 				newEnv.setSyllablePlacement(
-						SetHelpers.getIntersectionOfSets(existingGenRuleEnv.getSyllablePlacement(), 
+						Helpers.getIntersectionOfSets(existingGenRuleEnv.getSyllablePlacement(), 
 								currentEnv.getSyllablePlacement())
 						);
 
 				newEnv.setVowelPlacement(
-						SetHelpers.getIntersectionOfSets(existingGenRuleEnv.getVowelPlacement(), 
+						Helpers.getIntersectionOfSets(existingGenRuleEnv.getVowelPlacement(), 
 								currentEnv.getVowelPlacement())
 						);
 
 				newEnv.setComesAfterPhonemes(
-						SetHelpers.getSet1MinusSet2(existingGenRuleEnv.getComesAfterPhonemes(),
+						Helpers.getSet1MinusSet2(existingGenRuleEnv.getComesAfterPhonemes(),
 								currentEnv.getDoesntComeAfterPhonemes()
 						));
 				
@@ -172,7 +172,7 @@ public class RuleGeneralizer {
 				newEnv = removeContrastsFromSet(newEnv, newEnv.getComesAfterPhonemes());
 				
 				newEnv.setComesBeforePhonemes(
-						SetHelpers.getSet1MinusSet2(existingGenRuleEnv.getComesBeforePhonemes(),
+						Helpers.getSet1MinusSet2(existingGenRuleEnv.getComesBeforePhonemes(),
 								currentEnv.getDoesntComeBeforePhonemes()
 						));
 				
