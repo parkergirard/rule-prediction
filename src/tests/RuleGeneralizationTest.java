@@ -27,6 +27,7 @@ public class RuleGeneralizationTest {
 			RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 			GeneralizedRule.printRules(rg.getGeneralizedRules());
 			
+			
 	}
 
 }

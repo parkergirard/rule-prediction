@@ -141,6 +141,12 @@ public class FeatureProperties {
 		return voices;
 	}
 	
+	public boolean isGlobal() {
+		return places.size() == PLACE.values().length &&
+				manners.size() == MANNER.values().length - 3 &&
+				voices.size() == VOICE.values().length;
+	}
+	
 	@Override
 	/**
 	 * A = B if B's details are exactly A's details

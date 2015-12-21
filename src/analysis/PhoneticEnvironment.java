@@ -232,7 +232,9 @@ public class PhoneticEnvironment {
 				syllablePlacement.size() == CONSONANT_POSITION.values().length &&
 				vowelPlacement.size() == VOWEL_POSITION.values().length &&
 				doesntComeAfterPhonemes.size() == 0 && 
-				doesntComeBeforePhonemes.size() == 0 ;
+				doesntComeBeforePhonemes.size() == 0 &&
+				comesAfterFeatures.isGlobal() &&
+				comesBeforeFeatures.isGlobal();
 	}
 	
 	@Override
