@@ -35,6 +35,7 @@ public class PhoneticEnvironment {
 		
 		if (global) {
 			
+			// comes after/before any feature
 			makeComesBeforeAndAfterGlobal();
 			
 			// comes at every placement
@@ -47,9 +48,6 @@ public class PhoneticEnvironment {
 			for (int i = 0; i < vals.length; i++) {
 				vowelPlacement.add(vals[i]);
 			}
-			// comes after and before any feature
-			comesAfterFeatures.makeAllFeaturesGlobal();
-			comesBeforeFeatures.makeAllFeaturesGlobal();
 		}
 	}
 	
@@ -59,15 +57,24 @@ public class PhoneticEnvironment {
 		wordPlacement = new HashSet<POSITION>();
 		wordPlacement.add(p);
 	}
-	
+	public void setWordPlacement(Set<POSITION> ps) {
+		this.wordPlacement = new HashSet<POSITION>(ps);
+	}
+
 	public void setSyllablePlacement(POSITION p) {
 		syllablePlacement = new HashSet<POSITION>();
 		syllablePlacement.add(p);
+	}
+	public void setSyllablePlacement(Set<POSITION> ps) {
+		this.syllablePlacement = new HashSet<POSITION>(ps);
 	}
 	
 	public void setVowelPlacement(POSITION p) {
 		vowelPlacement = new HashSet<POSITION>();
 		vowelPlacement.add(p);
+	}
+	public void setVowelPlacement(Set<POSITION> ps) {
+		this.vowelPlacement = new HashSet<POSITION>(ps);
 	}
 	
 	public void addWordPlacement(POSITION p) {
@@ -151,7 +158,13 @@ public class PhoneticEnvironment {
 		comesBeforeFeatures.removeVoicing(v);
 	}
 
-
+	public void setComesAfterPhonemes(Set<PHONEME> set) {
+		this.comesAfterPhonemes = set;
+	}
+	public void setComesBeforePhonemes(Set<PHONEME> set) {
+		this.comesBeforePhonemes = set;
+	}
+	
 	public Set<PHONEME> getComesAfterPhonemes() {
 		return comesAfterPhonemes;
 	}

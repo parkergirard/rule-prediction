@@ -115,19 +115,101 @@ public class RuleGeneralizer {
 				outputPhonemeFeatures.addManner(actualManner);
 			}
 			
+			// PHONETIC ENV
+			
 			DoubleFeatureProperties dfp = new 
 					DoubleFeatureProperties(inputPhonemeFeatures,
 							outputPhonemeFeatures);
 			
-			if (featuresToRule.get(dfp) == null) {
+			// get any existing rule for these input/output features
+			GeneralizedRule existingGenRule = featuresToRule.get(dfp);
+			
+			// Construct Phonetic Env for the new rule
+			PhoneticEnvironment newEnv = new PhoneticEnvironment(false);
+			
+			// get phonetic env from the current specific rule
+			PhoneticEnvironment currentEnv = r.getEnvironment();
+			
+			if (existingGenRule == null) {
+				// gen rule with exact same input/output features doesn't
+				// exist yet. make env of the gen rule = the specific rule
 				
+				newEnv = currentEnv;
+			} else {
+				// gen rule that has the exact 
+				// same input/output features does already exist
+				
+				// intersect all aspects of the environments
+				
+				PhoneticEnvironment existingGenRuleEnv = 
+						existingGenRule.getPhoneticEnvironment();
+
+				newEnv.setWordPlacement(
+						getIntersectionOfSets(existingGenRuleEnv.getWordPlacement(),
+								currentEnv.getWordPlacement())
+						);
+
+				newEnv.setSyllablePlacement(
+						getIntersectionOfSets(existingGenRuleEnv.getSyllablePlacement(), 
+								currentEnv.getSyllablePlacement())
+						);
+
+				newEnv.setVowelPlacement(
+						getIntersectionOfSets(existingGenRuleEnv.getVowelPlacement(), 
+								currentEnv.getVowelPlacement())
+						);
+
+				newEnv.setComesAfterPhonemes(
+						getIntersectionOfSets(existingGenRuleEnv.getComesAfterPhonemes(), 
+								currentEnv.getComesAfterPhonemes())
+						);
+				
+				newEnv.setComesBeforePhonemes(
+						getIntersectionOfSets(existingGenRuleEnv.getComesBeforePhonemes(), 
+								currentEnv.getComesBeforePhonemes())
+						);
+				
+				// delete the already existed general rule
+				featuresToRule.remove(dfp);
+				r = null;
 			}
 			
+			// add the new gen rule
+			GeneralizedRule newGenRule = new GeneralizedRule(
+					inputPhonemeFeatures, outputPhonemeFeatures,
+					remainsSame, newEnv);
+			featuresToRule.put(dfp, newGenRule);
 		}
 	}
 	
 	public Set<GeneralizedRule> getGeneralizedRules() {
 		return generalizedRules;
+	}
+	
+	/**
+	 * Helper function which when given a set of sets,
+	 * returns one maximal set, such that each element
+	 * in the set is contained in all of the input sets
+	 * @param sets a set of sets containing elements
+	 * @return the intersecting set
+	 */
+	private static <T> Set<T> getIntersectionOfSets(Set<T> set1, Set<T> set2) {
+		Set<T> intersection = new HashSet<T>();
+		
+		// loop through the first set and add all of the same elements
+		// contained in the second set to the intersection
+		for (T el : set1) {
+			if (!set2.contains(el)) {
+				// second set didn't contain this element, so it's
+				// not in the intersection
+				break;
+			} else {
+				// element is in both sets, and therefore the intersection
+				intersection.add(el);
+			}
+		}
+		
+		return intersection;
 	}
 	
 	/**
