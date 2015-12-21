@@ -19,7 +19,7 @@ public class RulePredictionTest {
 	public void testInvalidPhoneme() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("D-EY", "D-EYx");
-		new RulePrediction(map);
+		new SpecificRuleFormer(map);
 	}
 	
 	
@@ -31,7 +31,7 @@ public class RulePredictionTest {
 		map.put("JH-AX R-AE-F", "JH-AX W-AE-F");
 		map.put("S-T-AO_R", "S-T-AO_R");
 		
-		RulePrediction rp = new RulePrediction(map);
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
 		assertEquals(8, rp.getRules().size());
 		
@@ -81,7 +81,7 @@ public class RulePredictionTest {
 		map.put("Z-IY B-R-AX", "DH-IY B-R-AX");
 		map.put("P-L-IY-Z", "P-L-IY-Z");
 		
-		RulePrediction rp = new RulePrediction(map);
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
 		int size = rp.getRules().size();
 		assertTrue(size == 8 || size == 9 || size == 10 );
@@ -262,7 +262,7 @@ public class RulePredictionTest {
 		map.put("R-UH B-IH-NG", "W-UH B-IH-NG");
 		map.put("S-L-IY-P", "S-W-IY-P");
 		
-		RulePrediction rp = new RulePrediction(map);
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
 		int size = rp.getRules().size();
 		
@@ -455,7 +455,7 @@ public class RulePredictionTest {
 			map.put("P-T", "T-T");
 			map.put("K-P", "K-P");
 			
-			RulePrediction rp = new RulePrediction(map);
+			SpecificRuleFormer rp = new SpecificRuleFormer(map);
 			
 			int size = rp.getRules().size();
 			assertEquals(3, size);
@@ -494,7 +494,7 @@ public class RulePredictionTest {
 			map.put("B-AE-K", "B-AE-T");
 			map.put("D-EY", "D-EY");
 			
-			RulePrediction rp = new RulePrediction(map);
+			SpecificRuleFormer rp = new SpecificRuleFormer(map);
 			
 			int size = rp.getRules().size();
 			assertEquals(5, size);

@@ -23,7 +23,7 @@ public class RuleGeneralizationTest {
 			map.put("B-AE-K", "B-AE-T");
 			map.put("D-EY", "D-EY");
 			
-			RulePrediction rp = new RulePrediction(map);
+			SpecificRuleFormer rp = new SpecificRuleFormer(map);
 			
 			int size = rp.getRules().size();
 			assertEquals(1, size);

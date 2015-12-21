@@ -8,7 +8,7 @@ import java.util.Set;
 
 import enums.*;
 
-public class RulePrediction {
+public class SpecificRuleFormer {
 
 	// maps targets to how the child pronounced them
 	// sequences separated by vowels
@@ -24,7 +24,7 @@ public class RulePrediction {
 	 * by converting strings into phoneme sequences
 	 * @param map: maps target words to pronunciation
 	 */
-	public RulePrediction(Map<String, String> map) {
+	public SpecificRuleFormer(Map<String, String> map) {
 
 		if (map == null) {
 			throw new IllegalArgumentException("Map cannot be null");
@@ -382,49 +382,6 @@ public class RulePrediction {
 
 		return ruleEnv;
 
-	}
-	
-	/**
-	 * Generalizes rules from the specific rules formed from the
-	 * training set
-	 */
-	public void generalizeRules() {
-		// only look at NON SELF TRANSFORMING RULES
-		for (Set<Rule> rs : phonemeToRules.values()) {
-			for (Rule r : rs) {
-				if (r.transformsToSelf()) {
-					// skip this rule because it transforms to itself
-					continue;
-				}
-				
-				// this rule either transforms to itself SOMETIMES, or
-				// transforms to a phoneme other than itself
-				
-				
-				
-			}
-		}
-	}
-
-	/**
-	 * Guess the pronunciation given a target
-	 * @param target
-	 * @return set of possibilities for how the child might pronounce the target
-	 */
-	public Set<String> guessPronunciation(String targetStr) {
-		if (targetStr == null) {
-			throw new IllegalArgumentException("Target cannot be null");
-		}
-
-		Set<String> possibilities = new HashSet<String>();
-
-		// convert target to phoneme sequence
-		PhonemeSequence[] target = 
-				convertStringToPhonemeSequence(targetStr);
-		possibilities.add(target.toString());
-
-
-		return possibilities;
 	}
 
 	public Set<Rule> getRules() {
