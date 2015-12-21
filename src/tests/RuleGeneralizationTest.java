@@ -98,6 +98,8 @@ public class RuleGeneralizationTest {
 		
 		Collection<GeneralizedRule> rules = rg.getGeneralizedRules();
 		GeneralizedRule.printRules(rules);
+		
+		// IT WORKS!
 	}
 
 }
