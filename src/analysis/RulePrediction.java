@@ -177,8 +177,7 @@ public class RulePrediction {
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 
 				// If this rule that says target changes to itself
-				if (r.getTargetPhoneme().
-						equals(r.getActualPhoneme())) {
+				if (r.transformsToSelf()) {
 
 					// this rule says to transform to itself
 					// (but the child transformed it to something else)
@@ -390,12 +389,11 @@ public class RulePrediction {
 	 * training set
 	 */
 	public void generalizeRules() {
-		// only look at NON SELF TRANSFORMING GLOBAL RULES
+		// only look at NON SELF TRANSFORMING RULES
 		for (Set<Rule> rs : phonemeToRules.values()) {
 			for (Rule r : rs) {
-				if (r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme())) {
-					// skip this rule because it is global and transforms to 
-					// itself
+				if (r.transformsToSelf()) {
+					// skip this rule because it transforms to itself
 					continue;
 				}
 				

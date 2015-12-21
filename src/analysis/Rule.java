@@ -1,5 +1,7 @@
 package analysis;
 
+import java.util.Set;
+
 import enums.*;
 
 /**
@@ -102,6 +104,10 @@ public class Rule {
 		return environment.isGlobal();
 	}
 	
+	public boolean transformsToSelf() {
+		return targetPhoneme.equals(actualPhoneme);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -139,5 +145,39 @@ public class Rule {
         return targetPhoneme.hashCode() +
         		actualPhoneme.hashCode() + environment.hashCode();
     }
+
+	
+	public static Rule getGlobalRuleForPhonemes(PHONEME p1, PHONEME p2) {
+		// PHONEME -> PHONEME always
+		PhoneticEnvironment e = new PhoneticEnvironment(true);
+		Rule globalRule = new Rule(e, p1, p2);
+		return globalRule;
+	}
+	
+	@SuppressWarnings("unused")
+	public static void printRules(Set<Rule> rules) {
+		printRules(rules, true);
+	}
+	
+	public static void printRules(Set<Rule> rules, boolean printSelfTransformingGlobals) {
+		String str = "";
+		if (printSelfTransformingGlobals) {
+			str = "RULES";
+		} else {
+			str = "NON SELF TRANSFORMING GLOBAL RULES";
+		}
+		System.out.println("\n ******" + str + " ****");
+		
+		int count = 0;
+		for (Rule r : rules) {
+			if (r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme()) 
+					&& !printSelfTransformingGlobals) {
+				continue;
+			}
+			count++;
+			System.out.println("\n\n*****RULE " + count + "****\n");
+			System.out.println(r);
+		}
+	}
 	
 }

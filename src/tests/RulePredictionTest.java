@@ -14,38 +14,6 @@ import enums.*;
 
 public class RulePredictionTest {
 
-	@SuppressWarnings("unused")
-	private void printRules(Set<Rule> rules) {
-		printRules(rules, true);
-	}
-	
-	private void printRules(Set<Rule> rules, boolean printSelfTransformingGlobals) {
-		String str = "";
-		if (printSelfTransformingGlobals) {
-			str = "RULES";
-		} else {
-			str = "NON SELF TRANSFORMING GLOBAL RULES";
-		}
-		System.out.println("\n ******" + str + " ****");
-		
-		int count = 0;
-		for (Rule r : rules) {
-			if (r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme()) 
-					&& !printSelfTransformingGlobals) {
-				continue;
-			}
-			count++;
-			System.out.println("\n\n*****RULE " + count + "****\n");
-			System.out.println(r);
-		}
-	}
-	
-	private Rule getGlobalRuleForPhonemes(PHONEME p1, PHONEME p2) {
-		// PHONEME -> PHONEME always
-		PhoneticEnvironment e = new PhoneticEnvironment(true);
-		Rule globalRule = new Rule(e, p1, p2);
-		return globalRule;
-	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testInvalidPhoneme() {
@@ -534,11 +502,11 @@ public class RulePredictionTest {
 			
 			Set<Rule> expectedRules = new HashSet<Rule>();
 			
-			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.P, PHONEME.P));
-			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.T, PHONEME.T));
-			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.K, PHONEME.T));
-			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.B, PHONEME.B));
-			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.D, PHONEME.D));
+			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.P, PHONEME.P));
+			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.T, PHONEME.T));
+			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.K, PHONEME.T));
+			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.B, PHONEME.B));
+			expectedRules.add(Rule.getGlobalRuleForPhonemes(PHONEME.D, PHONEME.D));
 			
 			assertTrue(rp.getRules().containsAll(expectedRules));
 	}

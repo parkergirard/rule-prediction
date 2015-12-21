@@ -13,23 +13,14 @@ public class FeatureProperties {
 	Set<PLACE> places;
 	Set<MANNER> manners;
 	Set<VOICE> voices;
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("Places: ");
-		sb.append(places);
-		sb.append("\nManners: ");
-		sb.append(manners);
-		sb.append("\nVoices: ");
-		sb.append(voices);
-		
-		return sb.toString();
-	}
 	
 	public FeatureProperties() {
-		initMaps();
+		initEmptyMaps();
+	}
+	
+	public FeatureProperties(PHONEME p) {
+		initEmptyMaps();
+		add(p);
 	}
 	
 	/**
@@ -39,14 +30,8 @@ public class FeatureProperties {
 	 * @param v
 	 */
 	public FeatureProperties(PLACE p, MANNER m, VOICE v) {
-		initMaps();
+		initEmptyMaps();
 		add(p, m, v);
-	}
-	
-	private void initMaps() {
-		this.places = new HashSet<PLACE>();
-		this.manners = new HashSet<MANNER>();
-		this.voices = new HashSet<VOICE>();
 	}
 	
 	public FeatureProperties(Set<PLACE> places, 
@@ -56,6 +41,13 @@ public class FeatureProperties {
 		this.voices = voices;
 	}
 
+	
+	private void initEmptyMaps() {
+		this.places = new HashSet<PLACE>();
+		this.manners = new HashSet<MANNER>();
+		this.voices = new HashSet<VOICE>();
+	}
+	
 	public void addPlace(PLACE place) {
 		places.add(place);
 	}
@@ -102,6 +94,10 @@ public class FeatureProperties {
 		if (v != null) {
 			voices.add(v);
 		}
+	}
+	
+	public void add(PHONEME p) {
+		add(p.getPlace(), p.getManner(), p.getVoice());
 	}
 	
 	/**
@@ -154,4 +150,18 @@ public class FeatureProperties {
     public int hashCode() {
         return Objects.hash(places, manners, voices);
     }
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Places: ");
+		sb.append(places);
+		sb.append("\nManners: ");
+		sb.append(manners);
+		sb.append("\nVoices: ");
+		sb.append(voices);
+		
+		return sb.toString();
+	}
 }

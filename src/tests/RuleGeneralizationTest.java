@@ -1,0 +1,38 @@
+package tests;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import analysis.*;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import enums.PHONEME;
+
+public class RuleGeneralizationTest {
+
+	@Test
+	public void secondExamQuestion() {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("P-AA-T", "P-AA-T");
+			map.put("T-AA-P", "T-AA-P");
+			map.put("K-AE-T", "T-AE-T");
+			map.put("B-AE-K", "B-AE-T");
+			map.put("D-EY", "D-EY");
+			
+			RulePrediction rp = new RulePrediction(map);
+			
+			int size = rp.getRules().size();
+			assertEquals(1, size);
+			
+			
+			Set<Rule> expectedRules = new HashSet<Rule>();
+			
+			
+			assertTrue(rp.getRules().containsAll(expectedRules));
+	}
+
+}

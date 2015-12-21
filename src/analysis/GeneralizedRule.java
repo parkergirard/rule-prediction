@@ -15,20 +15,13 @@ public class GeneralizedRule {
 	private Set<FEATURE> remainsSame;
 	
 	/**
-	 * Construct a generalized rule from the intersections of
-	 * features from a set of input phonemes and a
-	 * set of environments
-	 * @param inputs the input phonemes
-	 * @param envs the phonetic environments
+	 * Construct an "empty" generalized rule
+	 * with features from the input phoneme
+	 * @param inputPhoneme
 	 */
-	public GeneralizedRule(Set<PHONEME> inputs, 
-			Set<PhoneticEnvironment> envs) {
-		
-		Set<PLACE> inputPlaces = new HashSet<PLACE>();
-		Set<MANNER> inputMannes = new HashSet<MANNER>();
-		Set<VOICE> inputVoices = new HashSet<VOICE>();
-		// get intersection of the input features
-		
+	public GeneralizedRule(PHONEME inputPhoneme) {
+		// add all features of the input phoneme
+		inputPhonemeFeatures.add(inputPhoneme);
 	}
 	
 	/**
