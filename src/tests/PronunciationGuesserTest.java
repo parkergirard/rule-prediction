@@ -27,10 +27,12 @@ public class PronunciationGuesserTest {
 		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
-//		GeneralizedRule.printRules(genRules);
 		PronunciationGuesser guesser = new PronunciationGuesser(genRules);
-		String guess = guesser.guessPronunciationOfTargetWord("G-EY-M");
-		System.out.println("G-EY-M to " + guess);
+		assertEquals("D-EY-M", guesser.guessPronunciationOfTargetWord("G-EY-M"));
+		assertEquals("D-EY-D", guesser.guessPronunciationOfTargetWord("G-EY-G"));
+		assertEquals("T-UH-M", guesser.guessPronunciationOfTargetWord("K-UH-M"));
+		assertEquals("T-UH-T", guesser.guessPronunciationOfTargetWord("K-UH-K"));
+		assertEquals("D-EY-D T-UH-M", guesser.guessPronunciationOfTargetWord("G-EY-G K-UH-M"));
 	}
 
 }

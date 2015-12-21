@@ -130,9 +130,6 @@ public class PronunciationGuesser {
 					}
 					// get rule that can apply for this phoneme/environment
 					
-//					System.out.println(targetPhoneme + "'s Environment: ");
-//					System.out.println(e);
-					
 					GeneralizedRule r = getRuleForPhonemeAndEnvironment(targetPhoneme, e);
 					if (r == null) {
 						// no rule was found. do not apply transformation

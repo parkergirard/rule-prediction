@@ -363,7 +363,7 @@ public class SpecificRuleFormer {
 		// if rule env contains instructions to transform
 		// after certain features, remove them
 		// UNLESS the previous phoneme is a vowel
-		if (previousPhoneme != null && !previousPhoneme.getGroup().equals(GROUP.VOWEL)) {
+		if (previousPhoneme != null && !previousPhoneme.isVowel()) {
 			if (remove) {
 				ruleEnv.removeComesAfterPhoneme(previousPhoneme);
 			} else {
@@ -374,7 +374,7 @@ public class SpecificRuleFormer {
 		// if rule env contains instructions to transform
 		// before certain features, remove them
 		// UNLESS the next phoneme is a vowel
-		if (nextPhoneme != null && !nextPhoneme.getGroup().equals(GROUP.VOWEL)) {
+		if (nextPhoneme != null && !nextPhoneme.isVowel()) {
 			if (remove) {
 				ruleEnv.removeComesBeforePhoneme(nextPhoneme);
 			} else {
