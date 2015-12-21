@@ -133,6 +133,10 @@ public enum PHONEME {
 	public void setVoice(VOICE voice) {
 		this.voice = voice;
 	}
+	
+	public boolean isVowel() {
+		return group.equals(GROUP.VOWEL);
+	}
 
 	@Override
 	public String toString() {

@@ -2,26 +2,37 @@ package analysis;
 
 import helpers.Helpers;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import enums.CONSONANT_POSITION;
-import enums.GROUP;
-import enums.PHONEME;
-import enums.POSITION;
-import enums.VOWEL_POSITION;
+import enums.*;
 
 public class PronunciationGuesser {
 
-	private Set<GeneralizedRule> rules;
+	private Collection<GeneralizedRule> rules;
+	private Map<FeatureProperties, PHONEME> featuresToPhoneme;
 
 	/**
 	 * Given a set of general rules, construct a guesser
-	 * @param rules
+	 * @param collection
 	 */
-	public PronunciationGuesser(Set<GeneralizedRule> rules) {
-		this.rules = rules;
+	public PronunciationGuesser(Collection<GeneralizedRule> collection) {
+		this.rules = collection;
+		// initialize features to phoneme map
+		featuresToPhoneme = new HashMap<FeatureProperties, PHONEME>();
+		for (PHONEME p : PHONEME.values()) {
+			// don't add vowels
+			if (p.getGroup().equals(GROUP.VOWEL)) {
+				continue;
+			}
+			// add to map
+			featuresToPhoneme.put(
+					new FeatureProperties(p.getPlace(), 
+							p.getManner(), p.getVoice()), p);
+		}
 	}
 
 	/**
@@ -33,7 +44,7 @@ public class PronunciationGuesser {
 	 * @return the guess, where each element in the 
 	 * array is a syllable with phonemes
 	 */
-	public PhonemeSequence[] guessPronunciationOfTargetWord(String word) {
+	public String guessPronunciationOfTargetWord(String word) {
 		
 		PhonemeSequence[] targetSyllables = 
 				Helpers.convertStringToPhonemeSequence(word);
@@ -103,7 +114,7 @@ public class PronunciationGuesser {
 
 				
 				// If input phoneme is a vowel, return input phoneme
-				if (!targetPhoneme.getGroup().equals(GROUP.VOWEL)) {
+				if (targetPhoneme.getGroup().equals(GROUP.VOWEL)) {
 					guessSyllable.add(targetPhoneme);
 				} else {
 					// construct this environment
@@ -111,25 +122,98 @@ public class PronunciationGuesser {
 					e.addWordPlacement(wordPosition);
 					e.addSyllablePlacement(syllablePosition);
 					e.addVowelPlacement(vowelPosition);
-					e.addComesAfterPhoneme(previousPhoneme);
-					e.addComesBeforePhoneme(previousPhoneme);
+					if (previousPhoneme != null && !previousPhoneme.isVowel()) {
+						e.addComesAfterPhoneme(previousPhoneme);
+					}
+					if (nextPhoneme != null && !nextPhoneme.isVowel()) {
+						e.addComesBeforePhoneme(nextPhoneme);
+					}
 					// get rule that can apply for this phoneme/environment
+					
+//					System.out.println(targetPhoneme + "'s Environment: ");
+//					System.out.println(e);
+					
 					GeneralizedRule r = getRuleForPhonemeAndEnvironment(targetPhoneme, e);
 					if (r == null) {
 						// no rule was found. do not apply transformation
 						guessSyllable.add(targetPhoneme);
 					} else {
-						// apply the rule to the phoneme, and transform it
+						// a rule for this phoneme/environment exists.
+						// apply the rule to the phoneme
+						
+						PLACE transformsToPlace = null;
+						MANNER transformsToManner = null;
+						VOICE transformsToVoice = null;
+						
+						Set<FEATURE_TYPE> remainsSame = 
+								r.getFeatureTypesThatRemainSame();
+
+						FeatureProperties outputProps = r.getOutputPhonemeFeatures();
+						
+						// if place remains same, dont change it.
+						// otherwise, transform it
+						if (remainsSame.contains(FEATURE_TYPE.PLACE)) {
+							transformsToPlace = targetPhoneme.getPlace();
+						} else {
+							transformsToPlace = outputProps.getSinglePlace();
+						}
+						
+						// if manner remains same, dont change it.
+						// otherwise, transform it
+						if (remainsSame.contains(FEATURE_TYPE.MANNER)) {
+							transformsToManner = targetPhoneme.getManner();
+						} else {
+							transformsToManner = outputProps.getSingleManner();
+						}
+						
+						// if voice remains same, dont change it.
+						// otherwise, transform it
+						if (remainsSame.contains(FEATURE_TYPE.VOICE)) {
+							transformsToVoice = targetPhoneme.getVoice();
+						} else {
+							transformsToVoice = outputProps.getSingleVoice();
+						}
+						
+						FeatureProperties newPhonemeFeatures = new 
+								FeatureProperties(transformsToPlace, 
+										transformsToManner, transformsToVoice);
+						
+						// check if this phoneme exists
+						PHONEME transformToPhoneme = featuresToPhoneme
+								.get(newPhonemeFeatures);
+						
+						if (transformToPhoneme == null) {
+							// this phoneme doesn't exist. don't transform
+							guessSyllable.add(targetPhoneme);
+						} else {
+							// this phoneme exists. transform it
+							guessSyllable.add(transformToPhoneme);
+						}
+						
 					}
 				}
-
+				
 				// move to next phoneme
 				j++;
 				previousPhoneme = targetPhoneme;
 			}
+			guessWord[i] = guessSyllable;
 		}
 
-		return guessWord;
+		return convertPhonemeSequenceArrayToString(guessWord);
+	}
+	
+	private String convertPhonemeSequenceArrayToString(PhonemeSequence[] seqArr) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (PhonemeSequence seq : seqArr) {
+			if (!first) {
+				sb.append(" ");
+			}
+			sb.append(seq.toString());
+			first = false;
+		}
+		return sb.toString();
 	}
 	
 	/**

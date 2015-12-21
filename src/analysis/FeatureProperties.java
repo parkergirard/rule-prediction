@@ -59,6 +59,17 @@ public class FeatureProperties {
 	public Set<PLACE> getPlaces() {
 		return places;
 	}
+
+	public PLACE getSinglePlace() {
+		if (places.size() == 0 || places.size() > 1) {
+			throw new IllegalArgumentException("More than one place.");
+		}
+		// there's only one place. return it
+		for (PLACE p : places) {
+			return p;
+		}
+		return null;
+	}
 	
 	public void addManner(MANNER manner) {
 		manners.add(manner);
@@ -71,6 +82,17 @@ public class FeatureProperties {
 	public Set<MANNER> getManners() {
 		return manners;
 	}
+	
+	public MANNER getSingleManner() {
+		if (manners.size() == 0 || manners.size() > 1) {
+			throw new IllegalArgumentException("More than one manner.");
+		}
+		// there's only one Manner. return it
+		for (MANNER m : manners) {
+			return m;
+		}
+		return null;
+	}
 
 	public void addVoice(VOICE voice) {
 		voices.add(voice);
@@ -78,6 +100,22 @@ public class FeatureProperties {
 
 	public void removeVoicing(VOICE voice) {
 		voices.remove(voice);
+	}
+	
+	public Set<VOICE> getVoices() {
+		return voices;
+	}
+	
+
+	public VOICE getSingleVoice() {
+		if (voices.size() == 0 || voices.size() > 1) {
+			throw new IllegalArgumentException("More than one voice.");
+		}
+		// there's only one Voice. return it
+		for (VOICE v : voices) {
+			return v;
+		}
+		return null;
 	}
 	
 	public void add(PLACE p, MANNER m, VOICE v) {
@@ -131,10 +169,6 @@ public class FeatureProperties {
 		for (int i = 0; i < vs.length; i++) {
 			voices.add((VOICE) vs[i]);
 		}
-	}
-	
-	public Set<VOICE> getVoices() {
-		return voices;
 	}
 	
 	public boolean isGlobal() {
