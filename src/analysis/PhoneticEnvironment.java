@@ -48,8 +48,8 @@ public class PhoneticEnvironment {
 				vowelPlacement.add(vals[i]);
 			}
 			// comes after and before any feature
-			comesAfterFeatures.makePropertiesGlobal();
-			comesBeforeFeatures.makePropertiesGlobal();
+			comesAfterFeatures.makeAllFeaturesGlobal();
+			comesBeforeFeatures.makeAllFeaturesGlobal();
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class PhoneticEnvironment {
 			comesAfterPhonemes.add(p);
 		}
 		doesntComeAfterPhonemes.clear();
-		comesAfterFeatures.makePropertiesGlobal();
+		comesAfterFeatures.makeAllFeaturesGlobal();
 	}
 	public void makeComesBeforeGlobal() {
 		// can come before every phoneme
@@ -188,7 +188,7 @@ public class PhoneticEnvironment {
 			comesBeforePhonemes.add(p);
 		}
 		doesntComeBeforePhonemes.clear();
-		comesBeforeFeatures.makePropertiesGlobal();
+		comesBeforeFeatures.makeAllFeaturesGlobal();
 	}
 	
 	public void makeComesBeforeAndAfterGlobal() {
@@ -203,8 +203,8 @@ public class PhoneticEnvironment {
 		}
 		doesntComeAfterPhonemes.clear();
 		doesntComeBeforePhonemes.clear();
-		comesAfterFeatures.makePropertiesGlobal();
-		comesBeforeFeatures.makePropertiesGlobal();
+		comesAfterFeatures.makeAllFeaturesGlobal();
+		comesBeforeFeatures.makeAllFeaturesGlobal();
 	}
 	
 

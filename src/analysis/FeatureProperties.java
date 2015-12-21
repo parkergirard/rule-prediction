@@ -72,7 +72,7 @@ public class FeatureProperties {
 		return manners;
 	}
 
-	public void addVoicing(VOICE voice) {
+	public void addVoice(VOICE voice) {
 		voices.add(voice);
 	}
 
@@ -103,12 +103,21 @@ public class FeatureProperties {
 	/**
 	 * Sets all sets to contain every possibility
 	 */
-	public void makePropertiesGlobal() {
+	public void makeAllFeaturesGlobal() {
+		makePlaceGlobal();
+		makeMannerGlobal();
+		makeVoiceGlobal();
+	}
+	
+	public void makePlaceGlobal() {
 		// places
 		PLACE[] ps = PLACE.values();
 		for (int i = 0; i < ps.length; i++) {
 			places.add((PLACE) ps[i]);
 		}
+	}
+	
+	public void makeMannerGlobal() {
 		// manners
 		MANNER[] ms = MANNER.values();
 		for (int i = 0; i < ms.length; i++) {
@@ -118,6 +127,9 @@ public class FeatureProperties {
 			}
 			manners.add((MANNER) ms[i]);
 		}
+	}
+	
+	public void makeVoiceGlobal() {
 		// voices
 		VOICE[] vs = VOICE.values();
 		for (int i = 0; i < vs.length; i++) {

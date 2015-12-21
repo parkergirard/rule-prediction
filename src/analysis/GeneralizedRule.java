@@ -1,4 +1,5 @@
 package analysis;
+import java.util.Objects;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -6,23 +7,76 @@ import enums.*;
 
 public class GeneralizedRule {
 	
-	private PhoneticEnvironment e;
-	
 	private FeatureProperties inputPhonemeFeatures;
 	private FeatureProperties outputPhonemeFeatures;
-	// set of features that remain the same as the input
-	// phoneme features
-	private Set<FEATURE> remainsSame;
+	// set of features types that remain the same as the input
+	// phoneme features (place/manner/voice)
+	private Set<FEATURE_TYPE> remainsSame;
+	
+	private PhoneticEnvironment env;
 	
 	/**
 	 * Construct an "empty" generalized rule
-	 * with features from the input phoneme
 	 * @param inputPhoneme
 	 */
-	public GeneralizedRule(PHONEME inputPhoneme) {
-		// add all features of the input phoneme
-		inputPhonemeFeatures.add(inputPhoneme);
+	public GeneralizedRule(FeatureProperties inputPhonemeFeatures, 
+			FeatureProperties outputPhonemeFeatures, 
+			Set<FEATURE_TYPE> remainsSame, PhoneticEnvironment env) {
+		
+		this.inputPhonemeFeatures = inputPhonemeFeatures;
+		this.outputPhonemeFeatures = outputPhonemeFeatures;
+		this.remainsSame = remainsSame;
+		this.env = env;
 	}
+
+	public FeatureProperties getInputPhonemeFeatures() {
+		return inputPhonemeFeatures;
+	}
+	
+	public FeatureProperties getOutputPhonemeFeatures() {
+		return outputPhonemeFeatures;
+	}
+	
+	public Set<FEATURE_TYPE> getFeatureTypesThatRemainSame() {
+		return remainsSame;
+	}
+	
+	public void addFeatureTypesThatRemainsSame(FEATURE_TYPE f) {
+		remainsSame.add(f);
+	}
+
+	public PhoneticEnvironment getPhoneticEnvironment() {
+		return env;
+	}
+
+	public void setPhoneticEnvironment(PhoneticEnvironment env) {
+		this.env = env;
+	}
+
+	@Override
+	/**
+	 * Rule A = Rule B if everything is the same
+	 */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GeneralizedRule r = (GeneralizedRule) o;
+        return inputPhonemeFeatures.equals(r.inputPhonemeFeatures) &&
+        		outputPhonemeFeatures.equals(r.outputPhonemeFeatures) &&
+        		remainsSame.equals(r.remainsSame) &&
+        		env.equals(r.env);
+    }
+
+    @Override
+    public int hashCode() {
+        return inputPhonemeFeatures.hashCode() +
+        		outputPhonemeFeatures.hashCode() + Objects.hash(remainsSame)
+        		+ env.hashCode();
+    }
 	
 	/**
 	 * Helper function which when given a set of sets,
