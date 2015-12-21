@@ -2,16 +2,15 @@ package analysis;
 
 import enums.*;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class RuleGeneralizer {
 
 	Set<SpecificRule> givenRules;
-	
-	Set<GeneralizedRule> generalizedRules;
 	
 	Map<DoubleFeatureProperties, GeneralizedRule> featuresToRule;
 	
@@ -22,10 +21,8 @@ public class RuleGeneralizer {
 	 */
 	public RuleGeneralizer(Set<SpecificRule> rules) {
 		this.givenRules = rules;
-		generalizedRules = new HashSet<GeneralizedRule>();
-		
+		featuresToRule = new HashMap<DoubleFeatureProperties, GeneralizedRule>();
 		generalize();
-		
 	}
 	
 	private void generalize() {
@@ -182,8 +179,8 @@ public class RuleGeneralizer {
 		}
 	}
 	
-	public Set<GeneralizedRule> getGeneralizedRules() {
-		return generalizedRules;
+	public Collection<GeneralizedRule> getGeneralizedRules() {
+		return featuresToRule.values();
 	}
 	
 	/**

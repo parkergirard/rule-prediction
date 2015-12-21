@@ -1,6 +1,6 @@
 package analysis;
 
-import java.util.Set;
+import java.util.Collection;
 
 import enums.*;
 
@@ -152,6 +152,31 @@ public class SpecificRule {
 		PhoneticEnvironment e = new PhoneticEnvironment(true);
 		SpecificRule globalRule = new SpecificRule(e, p1, p2);
 		return globalRule;
+	}
+	public static void printRules(Collection<SpecificRule> rules) {
+		printRules(rules, true);
+	}
+	
+	public static void printRules(Collection<SpecificRule> rules,
+			boolean printSelfTransformingGlobals) {
+		String str = "";
+		if (printSelfTransformingGlobals) {
+			str = "RULES";
+		} else {
+			str = "NON SELF TRANSFORMING GLOBAL RULES";
+		}
+		System.out.println("\n ******" + str + " ****");
+		
+		int count = 0;
+		for (SpecificRule r : rules) {
+			if (r.isGlobal() && r.getTargetPhoneme().equals(r.getActualPhoneme()) 
+					&& !printSelfTransformingGlobals) {
+				continue;
+			}
+			count++;
+			System.out.println("\n\n*****RULE " + count + "****\n");
+			System.out.println(r);
+		}
 	}
 	
 }

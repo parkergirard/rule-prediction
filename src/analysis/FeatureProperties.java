@@ -167,12 +167,26 @@ public class FeatureProperties {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
+		String gap = "    ";
+		
 		sb.append("Places: ");
-		sb.append(places);
+		if (places.size() == PLACE.values().length) {
+			sb.append("(ALL)");
+		}
+		sb.append("\n" + gap + places);
+		
 		sb.append("\nManners: ");
-		sb.append(manners);
+		// ( - 3 for vowel manners)
+		if (manners.size() == MANNER.values().length - 3) {
+			sb.append("(ALL)");
+		}
+		sb.append("\n" + gap + manners);
+		
 		sb.append("\nVoices: ");
-		sb.append(voices);
+		if (voices.size() == VOICE.values().length) {
+			sb.append("(ALL)");
+		}
+		sb.append("\n" + gap +  voices);
 		
 		return sb.toString();
 	}

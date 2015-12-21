@@ -1,7 +1,7 @@
 package analysis;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
-import java.util.HashSet;
 
 import enums.*;
 
@@ -77,5 +77,36 @@ public class GeneralizedRule {
         		outputPhonemeFeatures.hashCode() + Objects.hash(remainsSame)
         		+ env.hashCode();
     }
+    
+    @Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("\n***INPUT FEATURES***\n");
+		sb.append(inputPhonemeFeatures.toString());
+
+		sb.append("\n\n***OUTPUT FEATURES***\n");
+		sb.append(outputPhonemeFeatures.toString());
+
+		sb.append("\n\n***REMAINS SAME***\n");
+		sb.append(remainsSame.toString());
+		
+		sb.append("\n\n***PHONETIC ENV***\n");
+		sb.append(env.toString());
+		
+		return sb.toString();
+	}
+    
+    public static void printRules(Collection<GeneralizedRule> rules) {
+		String str = "RULES";
+		System.out.println("\n ******" + str + " ****");
+		
+		int count = 0;
+		for (GeneralizedRule r : rules) {
+			count++;
+			System.out.println("\n\n*****RULE " + count + "****\n");
+			System.out.println(r);
+		}
+	}
 	
 }

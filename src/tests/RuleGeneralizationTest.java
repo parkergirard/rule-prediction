@@ -25,6 +25,7 @@ public class RuleGeneralizationTest {
 			
 			SpecificRuleFormer rp = new SpecificRuleFormer(map);
 			RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
+			GeneralizedRule.printRules(rg.getGeneralizedRules());
 			
 	}
 
