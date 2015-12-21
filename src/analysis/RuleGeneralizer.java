@@ -162,10 +162,23 @@ public class RuleGeneralizer {
 								currentEnv.getDoesntComeAfterPhonemes()
 						));
 				
+				/*
+				 * For the specific rule, if there is a phoneme the specific 
+				 * rule cannot come after/before (P), the general rule cannot 
+				 * come after/before any phoneme that has P’s same place and 
+				 * manner, and opposite voicing
+				 */
+				
+				newEnv = removeContrastsFromSet(newEnv, newEnv.getComesAfterPhonemes());
+				
 				newEnv.setComesBeforePhonemes(
 						SetHelpers.getSet1MinusSet2(existingGenRuleEnv.getComesBeforePhonemes(),
 								currentEnv.getDoesntComeBeforePhonemes()
 						));
+				
+				// same as above but with comesBefore instead of after
+				
+				newEnv = removeContrastsFromSet(newEnv, newEnv.getComesBeforePhonemes());
 				
 				// delete the already existed general rule
 				featuresToRule.remove(dfp);
@@ -180,6 +193,55 @@ public class RuleGeneralizer {
 		}
 	}
 	
+	/**
+	 * Helper functions to remove contrasting phonemes from a set
+	 * of phonemes
+	 * @param e the phonetic environment to modify
+	 * @param set the set of phonemes to look at contrasts of
+	 * @return the modified environment
+	 */
+	private PhoneticEnvironment removeContrastsFromSet(PhoneticEnvironment e,
+			Set<PHONEME> set) {
+
+		Set<PHONEME> mustRemove = new HashSet<PHONEME>();
+		
+		Set<PHONEME> oppositeSet = null;
+		if (set.equals(e.getComesAfterPhonemes())) {
+			oppositeSet = 
+					e.getDoesntComeAfterPhonemes();
+		} else if (set.equals(e.getComesBeforePhonemes())) {
+			oppositeSet = 
+					e.getDoesntComeBeforePhonemes();
+		} else {
+			throw new IllegalArgumentException(
+					"Can only remove from comesAfter/"
+					+ "comesBefore phoneme sets.");
+		}
+		
+		for (PHONEME p : oppositeSet) {
+			try {
+				// get p's counterpart (same with opposite voicing)
+				PHONEME contrast = CONTRASTING_PHONEME.
+						valueOf(p.name()).getContrastingPhoneme();
+				// need to remove p's counterpart
+				mustRemove.add(contrast);
+			} catch (Exception ex) {
+				// ignore, it just means there is no contrasting phoneme
+			}
+		}
+		// remove all of the counterparts
+		for (PHONEME contrast : mustRemove) {
+			// remove from appropriate set
+			if (set.equals(e.getComesAfterPhonemes())) {
+				e.removeComesAfterPhoneme(contrast);
+			} else if (set.equals(e.getComesBeforePhonemes())) {
+				e.removeComesBeforePhoneme(contrast);
+			}
+		}
+		
+		return e;
+	}
+
 	public Collection<GeneralizedRule> getGeneralizedRules() {
 		return featuresToRule.values();
 	}

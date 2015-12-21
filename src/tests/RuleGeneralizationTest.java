@@ -61,7 +61,7 @@ public class RuleGeneralizationTest {
 			}
 			
 	}
-	
+
 	@Test
 	public void example2() {
 		Map<String, String> map = new HashMap<String, String>();
@@ -72,12 +72,32 @@ public class RuleGeneralizationTest {
 		
 		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
-		System.out.println(CONTRASTING_PHONEME.valueOf(PHONEME.P.name()));
 		
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		
 		Collection<GeneralizedRule> rules = rg.getGeneralizedRules();
 //		GeneralizedRule.printRules(rules);
+	}
+	
+	@Test
+	public void realData() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("D-UH-K", "D-UH-K");
+		map.put("P-IH-G", "P-IH-K");
+		map.put("P-IH G-IY", "P-IH G-IY");
+		map.put("D-AO-G", "D-AO-K");
+		map.put("D-AO G-IY", "D-AO G-IY");
+		map.put("R-UH-B", "W-UH-P");
+		map.put("R-UH B-IH-NG", "W-UH B-IH-NG");
+		map.put("S-L-IY-P", "S-W-IY-P");
+		
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
+		
+		
+		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
+		
+		Collection<GeneralizedRule> rules = rg.getGeneralizedRules();
+		GeneralizedRule.printRules(rules);
 	}
 
 }
