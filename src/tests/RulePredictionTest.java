@@ -18,8 +18,7 @@ public class RulePredictionTest {
 	private void printRules(Set<Rule> rules) {
 		printRules(rules, true);
 	}
-
-	@SuppressWarnings("unused")
+	
 	private void printRules(Set<Rule> rules, boolean printSelfTransformingGlobals) {
 		String str = "";
 		if (printSelfTransformingGlobals) {
@@ -540,8 +539,6 @@ public class RulePredictionTest {
 			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.K, PHONEME.T));
 			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.B, PHONEME.B));
 			expectedRules.add(getGlobalRuleForPhonemes(PHONEME.D, PHONEME.D));
-			
-			printRules(rp.getRules(), false);
 			
 			assertTrue(rp.getRules().containsAll(expectedRules));
 	}

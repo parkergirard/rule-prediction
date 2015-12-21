@@ -176,12 +176,9 @@ public class RulePrediction {
 				// phonetic environment for the rule
 				PhoneticEnvironment ruleEnv = r.getEnvironment();
 
-
-				FeatureProperties ruleTransformsTo = r.getTransformsToFeatures();
-
 				// If this rule that says target changes to itself
-				if (r.getOriginalFeatures().
-						equals(r.getTransformsToFeatures())) {
+				if (r.getTargetPhoneme().
+						equals(r.getActualPhoneme())) {
 
 					// this rule says to transform to itself
 					// (but the child transformed it to something else)
@@ -192,13 +189,7 @@ public class RulePrediction {
 					r.setEnvironment(ruleEnv);
 
 
-				} else if (!ruleTransformsTo.getPlaces().
-						contains(actualPhoneme.getPlace()) ||
-						!ruleTransformsTo.getManners().
-						contains(actualPhoneme.getManner()) ||
-						!ruleTransformsTo.getVoices().
-						contains(actualPhoneme.getVoice())
-						) {
+				} else if (!r.getActualPhoneme().equals(actualPhoneme)) {
 
 					// this rule says to transform to a phoneme other than
 					// itself, and other than the actual phoneme
@@ -208,13 +199,7 @@ public class RulePrediction {
 							vowelPosition, previousPhoneme, nextPhoneme, -1);
 					r.setEnvironment(ruleEnv);
 
-				} else if (ruleTransformsTo.getPlaces().
-						contains(actualPhoneme.getPlace()) &&
-						ruleTransformsTo.getManners().
-						contains(actualPhoneme.getManner()) &&
-						ruleTransformsTo.getVoices().
-						contains(actualPhoneme.getVoice())
-						) {
+				} else if (r.getActualPhoneme().equals(actualPhoneme)) {
 
 					// this rule says to transform the target phoneme
 					// to the actual phoneme (which the child did)
@@ -297,8 +282,8 @@ public class RulePrediction {
 
 				// If this rule that says target
 				// changes to a phoneme other than itself
-				if (!r.getOriginalFeatures().
-						equals(r.getTransformsToFeatures())) {
+				if (!r.getTargetPhoneme().
+						equals(r.getActualPhoneme())) {
 
 					// this rule says to transform to a dif phoneme
 					// delete the the properties of this environment

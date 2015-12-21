@@ -1,18 +1,24 @@
 package analysis;
 
+import java.util.Objects;
+
 import enums.*;
 
 /**
  * Rule has information about phonetic environment, and
  * about what sounds change
  */
-public class Rule {
+public class CopyOfRule implements Comparable<CopyOfRule> {
 	
 	PhoneticEnvironment environment;
 	
 	// properties from the target sound to the pronounced sound
 	PHONEME targetPhoneme;
 	PHONEME actualPhoneme;
+	FeatureProperties originalFeatures;
+	FeatureProperties transformsToFeatures;
+	int sureness = 0; // how sure we are that this rule is correct
+	int precedent = 0; // order of precedence for other rules (0 done first)
 	
 	/**
 	 * Construct a rule with info about
@@ -22,15 +28,16 @@ public class Rule {
 	 * @param originalProperties: What properties does it change from?
 	 * @param transformsToProperties: What properties does it change to?
 	 */
-	public Rule(PhoneticEnvironment env,
+	public CopyOfRule(PhoneticEnvironment env,
 			PHONEME targetPhoneme,
 			PHONEME actualPhoneme) {
 
-		this.environment = env;
-		
 		this.targetPhoneme = targetPhoneme;
 		this.actualPhoneme = actualPhoneme;
 		
+		this.environment = env;
+		this.originalFeatures = targetPhoneme.getProperties();
+		this.transformsToFeatures = actualPhoneme.getProperties();
 	}
 
 	/**
@@ -42,10 +49,12 @@ public class Rule {
 	 * @param actualPhoneme: the original transformed into this one
 	 * @param globalEnv: makes a global phonetic environment if true
 	 */
-	public Rule(PHONEME targetPhoneme, PHONEME actualPhoneme, boolean globalEnv) {
+	public CopyOfRule(PHONEME targetPhoneme, PHONEME actualPhoneme, boolean globalEnv) {
 		this.targetPhoneme = targetPhoneme;
 		this.actualPhoneme = actualPhoneme;
 		
+		this.originalFeatures = targetPhoneme.getProperties();
+		this.transformsToFeatures = actualPhoneme.getProperties();
 		this.environment = new PhoneticEnvironment(globalEnv);
 	}
 
@@ -55,14 +64,14 @@ public class Rule {
 	 * @param global: whether or not to make rule apply to all
 	 * phonetic environments
 	 */
-	public Rule(boolean global) {
+	public CopyOfRule(boolean global) {
 		init(global);
 	}
 	
 	/**
 	 * If not specified, assume global rule
 	 */
-	public Rule() {
+	public CopyOfRule() {
 		init(true);
 	}
 	
@@ -73,6 +82,8 @@ public class Rule {
 	 * phonetic environments
 	 */
 	private void init(boolean global) {
+		originalFeatures = new FeatureProperties();
+		transformsToFeatures = new FeatureProperties();
 		environment = new PhoneticEnvironment(global);
 	}
 
@@ -83,6 +94,22 @@ public class Rule {
 	
 	public PHONEME getActualPhoneme() {
 		return actualPhoneme;
+	}
+	
+	public void setOriginalFeatures(FeatureProperties p) {
+		this.originalFeatures = p;
+	}
+	
+	public void setTransformsToFeatures(FeatureProperties p) {
+		this.transformsToFeatures = p;
+	}
+
+	public FeatureProperties getOriginalFeatures() {
+		return this.originalFeatures;
+	}
+	
+	public FeatureProperties getTransformsToFeatures() {
+		return this.transformsToFeatures;
 	}
 	
 	public void setEnvironment(PhoneticEnvironment e) {
@@ -111,6 +138,12 @@ public class Rule {
 			sb.append(" (GLOBAL)");
 		}
 		
+		sb.append("\nOriginal Features\n");
+		sb.append(originalFeatures.toString());
+		
+		sb.append("\nTransforms to Features\n");
+		sb.append(transformsToFeatures.toString());
+		
 		sb.append("\n***PHONETIC ENV***\n");
 		sb.append(environment.toString());
 		
@@ -128,16 +161,26 @@ public class Rule {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Rule r = (Rule) o;
-        return targetPhoneme.equals(r.targetPhoneme) &&
-        		actualPhoneme.equals(r.actualPhoneme) &&
-        		environment.equals(r.environment);
+        CopyOfRule r = (CopyOfRule) o;
+        return Objects.equals(sureness, r.sureness) &&
+        		Objects.equals(precedent, r.precedent) &&
+        		environment.equals(r.environment) &&
+                originalFeatures.equals(r.originalFeatures) &&
+                transformsToFeatures.equals(r.transformsToFeatures);
     }
 
     @Override
     public int hashCode() {
-        return targetPhoneme.hashCode() +
-        		actualPhoneme.hashCode() + environment.hashCode();
+        return environment.hashCode() + 
+        		originalFeatures.hashCode() +  transformsToFeatures.hashCode();
+    }
+
+    @Override
+    /**
+     * Compare by sureness
+     */
+    public int compareTo(CopyOfRule other) {
+        return Integer.compare(sureness, other.sureness);
     }
 	
 }
