@@ -34,7 +34,6 @@ public class SpecificRuleFormerTest {
 		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
 		assertEquals(8, rp.getRules().size());
-		
 		Set<SpecificRule> expectedRules = new HashSet<SpecificRule>();
 		
 		PhoneticEnvironment e = new PhoneticEnvironment(true);

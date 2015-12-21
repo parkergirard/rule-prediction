@@ -76,10 +76,6 @@ public class FeatureProperties {
 		voices.add(voice);
 	}
 
-	public Set<VOICE> getVoicing() {
-		return voices;
-	}
-
 	public void removeVoicing(VOICE voice) {
 		voices.remove(voice);
 	}
@@ -143,7 +139,7 @@ public class FeatureProperties {
 	
 	public boolean isGlobal() {
 		return places.size() == PLACE.values().length &&
-				manners.size() == MANNER.values().length - 3 &&
+				manners.size() == MANNER.values().length &&
 				voices.size() == VOICE.values().length;
 	}
 	
@@ -182,8 +178,7 @@ public class FeatureProperties {
 		sb.append("\n" + gap + places);
 		
 		sb.append("\nManners: ");
-		// ( - 3 for vowel manners)
-		if (manners.size() == MANNER.values().length - 3) {
+		if (manners.size() == MANNER.values().length) {
 			sb.append("(ALL)");
 		}
 		sb.append("\n" + gap + manners);

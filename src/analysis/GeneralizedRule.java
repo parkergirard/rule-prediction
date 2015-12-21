@@ -98,7 +98,7 @@ public class GeneralizedRule {
 	}
     
     public static void printRules(Collection<GeneralizedRule> rules) {
-		String str = "RULES";
+		String str = "GEN RULES (" + rules.size() + ")";
 		System.out.println("\n ******" + str + " ****");
 		
 		int count = 0;

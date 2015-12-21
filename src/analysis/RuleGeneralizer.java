@@ -1,6 +1,7 @@
 package analysis;
 
 import enums.*;
+import helpers.SetHelpers;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -142,29 +143,29 @@ public class RuleGeneralizer {
 						existingGenRule.getPhoneticEnvironment();
 
 				newEnv.setWordPlacement(
-						getIntersectionOfSets(existingGenRuleEnv.getWordPlacement(),
+						SetHelpers.getIntersectionOfSets(existingGenRuleEnv.getWordPlacement(),
 								currentEnv.getWordPlacement())
 						);
 
 				newEnv.setSyllablePlacement(
-						getIntersectionOfSets(existingGenRuleEnv.getSyllablePlacement(), 
+						SetHelpers.getIntersectionOfSets(existingGenRuleEnv.getSyllablePlacement(), 
 								currentEnv.getSyllablePlacement())
 						);
 
 				newEnv.setVowelPlacement(
-						getIntersectionOfSets(existingGenRuleEnv.getVowelPlacement(), 
+						SetHelpers.getIntersectionOfSets(existingGenRuleEnv.getVowelPlacement(), 
 								currentEnv.getVowelPlacement())
 						);
 
 				newEnv.setComesAfterPhonemes(
-						getIntersectionOfSets(existingGenRuleEnv.getComesAfterPhonemes(), 
-								currentEnv.getComesAfterPhonemes())
-						);
+						SetHelpers.getSet1MinusSet2(existingGenRuleEnv.getComesAfterPhonemes(),
+								currentEnv.getDoesntComeAfterPhonemes()
+						));
 				
 				newEnv.setComesBeforePhonemes(
-						getIntersectionOfSets(existingGenRuleEnv.getComesBeforePhonemes(), 
-								currentEnv.getComesBeforePhonemes())
-						);
+						SetHelpers.getSet1MinusSet2(existingGenRuleEnv.getComesBeforePhonemes(),
+								currentEnv.getDoesntComeBeforePhonemes()
+						));
 				
 				// delete the already existed general rule
 				featuresToRule.remove(dfp);
@@ -183,31 +184,6 @@ public class RuleGeneralizer {
 		return featuresToRule.values();
 	}
 	
-	/**
-	 * Helper function which when given a set of sets,
-	 * returns one maximal set, such that each element
-	 * in the set is contained in all of the input sets
-	 * @param sets a set of sets containing elements
-	 * @return the intersecting set
-	 */
-	private static <T> Set<T> getIntersectionOfSets(Set<T> set1, Set<T> set2) {
-		Set<T> intersection = new HashSet<T>();
-		
-		// loop through the first set and add all of the same elements
-		// contained in the second set to the intersection
-		for (T el : set1) {
-			if (!set2.contains(el)) {
-				// second set didn't contain this element, so it's
-				// not in the intersection
-				break;
-			} else {
-				// element is in both sets, and therefore the intersection
-				intersection.add(el);
-			}
-		}
-		
-		return intersection;
-	}
 	
 	/**
 	 * Helper class to map input/output features as one key for a map

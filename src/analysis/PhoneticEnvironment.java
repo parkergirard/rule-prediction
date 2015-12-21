@@ -1,5 +1,7 @@
 package analysis;
 
+import helpers.SetHelpers;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,21 +13,17 @@ public class PhoneticEnvironment {
 	Set<POSITION> vowelPlacement;
 
 	// sets of descriptions of sounds before/after the rule occurs
-	FeatureProperties comesAfterFeatures;
 	Set<PHONEME> comesAfterPhonemes;
-	FeatureProperties comesBeforeFeatures;
 	Set<PHONEME> comesBeforePhonemes;
 	
 	Set<PHONEME> doesntComeAfterPhonemes;
 	Set<PHONEME> doesntComeBeforePhonemes;
+
 	
 	public PhoneticEnvironment(boolean global) {
 		wordPlacement = new HashSet<POSITION>();
 		syllablePlacement = new HashSet<POSITION>();
 		vowelPlacement = new HashSet<POSITION>();
-		
-		comesAfterFeatures = new FeatureProperties();
-		comesBeforeFeatures = new FeatureProperties();
 
 		comesAfterPhonemes = new HashSet<PHONEME>();
 		comesBeforePhonemes = new HashSet<PHONEME>();
@@ -114,57 +112,65 @@ public class PhoneticEnvironment {
 	}
 
 	public void addComesAfter(PHONEME p) {
-		comesAfterFeatures.add(p.getPlace(), p.getManner(), p.getVoice());
 		comesAfterPhonemes.add(p);
+		doesntComeAfterPhonemes.remove(p);
+
+		assertComesAndDoesntComeAddUp(comesAfterPhonemes, doesntComeAfterPhonemes);
 	}
 
-	public FeatureProperties getComesAfterFeatures() {
-		return comesAfterFeatures;
-	}
 
 	
 	public void addComesBefore(PHONEME p) {
-		comesBeforeFeatures.add(p.getPlace(), p.getManner(), p.getVoice());
 		comesBeforePhonemes.add(p);
-	}
-
-	public FeatureProperties getComesBeforeFeatures() {
-		return comesBeforeFeatures;
+		doesntComeBeforePhonemes.remove(p);
+		assertComesAndDoesntComeAddUp(comesBeforePhonemes, doesntComeBeforePhonemes);
 	}
 
 
 	public void removeComesAfterPhoneme(PHONEME p) {
-		removeComesAfterFeatures(p.getPlace(), p.getManner(), p.getVoice());
 		comesAfterPhonemes.remove(p);
 		doesntComeAfterPhonemes.add(p);
-	}
-	
-	private void removeComesAfterFeatures(PLACE p,MANNER m, VOICE v) {
-		comesAfterFeatures.removePlace(p);
-		comesAfterFeatures.removeManner(m);
-		comesAfterFeatures.removeVoicing(v);
+		assertComesAndDoesntComeAddUp(comesAfterPhonemes, doesntComeAfterPhonemes);
 	}
 
 	public void removeComesBeforePhoneme(PHONEME p) {
-		removeComesBeforeFeatures(p.getPlace(), p.getManner(), p.getVoice());
 		comesBeforePhonemes.remove(p);
 		doesntComeBeforePhonemes.add(p);
+		assertComesAndDoesntComeAddUp(comesBeforePhonemes, doesntComeBeforePhonemes);
 	}
 
+	private void assertComesAndDoesntComeAddUp(Set<PHONEME> s1, Set<PHONEME> s2) {
+		boolean ok = (s1.size() + s2.size() 
+				== (PHONEME.values().length - VOWELS_FOR_REFERENCE.values().length));
+		if (!ok) {
+			String str = "";
+			System.out.println(s1 + " " + s1.size());
+			System.out.println(s2 + " " + s2.size());
+			if (s1.equals(comesAfterPhonemes) && s2.equals(doesntComeAfterPhonemes)) {
+				str += "After/DoesntComeAfter";
+			} else if (s1.equals(comesBeforePhonemes) && s2.equals(doesntComeBeforePhonemes)) {
+				str += "Before/DoesntComeBefore";
+			} else {
+				throw new IllegalArgumentException("Invalid sets.");
+			}
+			throw new RuntimeException("Error in making " + str + " match up");
+		}
+	}
 	
-	private void removeComesBeforeFeatures(PLACE p,MANNER m, VOICE v) {
-		comesBeforeFeatures.removePlace(p);
-		comesBeforeFeatures.removeManner(m);
-		comesBeforeFeatures.removeVoicing(v);
-	}
-
 	public void setComesAfterPhonemes(Set<PHONEME> set) {
 		this.comesAfterPhonemes = set;
+		doesntComeAfterPhonemes =
+				SetHelpers.getSet1MinusSet2(PHONEME.values(), comesAfterPhonemes);
+		assertComesAndDoesntComeAddUp(comesAfterPhonemes, doesntComeAfterPhonemes);
+		
 	}
 	public void setComesBeforePhonemes(Set<PHONEME> set) {
 		this.comesBeforePhonemes = set;
+		doesntComeBeforePhonemes =
+				SetHelpers.getSet1MinusSet2(PHONEME.values(), comesBeforePhonemes);
+		assertComesAndDoesntComeAddUp(comesBeforePhonemes, doesntComeBeforePhonemes);
 	}
-	
+
 	public Set<PHONEME> getComesAfterPhonemes() {
 		return comesAfterPhonemes;
 	}
@@ -189,8 +195,8 @@ public class PhoneticEnvironment {
 			comesAfterPhonemes.add(p);
 		}
 		doesntComeAfterPhonemes.clear();
-		comesAfterFeatures.makeAllFeaturesGlobal();
 	}
+	
 	public void makeComesBeforeGlobal() {
 		// can come before every phoneme
 		// (ignore vowels)
@@ -201,7 +207,6 @@ public class PhoneticEnvironment {
 			comesBeforePhonemes.add(p);
 		}
 		doesntComeBeforePhonemes.clear();
-		comesBeforeFeatures.makeAllFeaturesGlobal();
 	}
 	
 	public void makeComesBeforeAndAfterGlobal() {
@@ -216,10 +221,37 @@ public class PhoneticEnvironment {
 		}
 		doesntComeAfterPhonemes.clear();
 		doesntComeBeforePhonemes.clear();
-		comesAfterFeatures.makeAllFeaturesGlobal();
-		comesBeforeFeatures.makeAllFeaturesGlobal();
+	}
+
+	public boolean isWordPlacementGlobal() {
+		return wordPlacement.size() == CONSONANT_POSITION.values().length;
 	}
 	
+	public boolean isSyllablePlacementGlobal() {
+		return syllablePlacement.size() == CONSONANT_POSITION.values().length;
+	}
+
+	public boolean isVowelPlacementGlobal() {
+		return vowelPlacement.size() == VOWEL_POSITION.values().length;
+	}
+	
+	public boolean isComesAfterPhonemesGlobal() {
+		boolean yes = comesAfterPhonemes.size() == PHONEME.values().length -
+				VOWELS_FOR_REFERENCE.values().length;
+		if (yes) {
+			assert(doesntComeAfterPhonemes.size() == 0);
+		}
+		return yes;
+	}
+	
+	public boolean isComesBeforePhonemesGlobal() {
+		boolean yes = comesBeforePhonemes.size() == PHONEME.values().length -
+				VOWELS_FOR_REFERENCE.values().length;
+		if (yes) {
+			assert(doesntComeBeforePhonemes.size() == 0);
+		}
+		return yes;
+	}
 
 	/**
 	 * Returns whether or not this environment contains every possibility
@@ -228,13 +260,9 @@ public class PhoneticEnvironment {
 	 */
 	public boolean isGlobal() {
 		
-		return wordPlacement.size() == CONSONANT_POSITION.values().length &&
-				syllablePlacement.size() == CONSONANT_POSITION.values().length &&
-				vowelPlacement.size() == VOWEL_POSITION.values().length &&
-				doesntComeAfterPhonemes.size() == 0 && 
-				doesntComeBeforePhonemes.size() == 0 &&
-				comesAfterFeatures.isGlobal() &&
-				comesBeforeFeatures.isGlobal();
+		return isWordPlacementGlobal() && isSyllablePlacementGlobal() &&
+				isVowelPlacementGlobal() && isComesAfterPhonemesGlobal() &&
+				isComesBeforePhonemesGlobal();
 	}
 	
 	@Override
@@ -252,44 +280,64 @@ public class PhoneticEnvironment {
         return  r.wordPlacement.equals(wordPlacement) &&
         		r.syllablePlacement.equals(syllablePlacement) &&
         		r.vowelPlacement.equals(vowelPlacement) &&
-                r.comesAfterFeatures.equals(comesAfterFeatures) &&
-                r.comesBeforeFeatures.equals(comesBeforeFeatures);
+                r.comesAfterPhonemes.equals(comesAfterPhonemes) &&
+                r.comesBeforePhonemes.equals(comesBeforePhonemes) &&
+                r.doesntComeAfterPhonemes.equals(doesntComeAfterPhonemes) &&
+                r.doesntComeBeforePhonemes.equals(doesntComeBeforePhonemes);
     }
 	
 	@Override
     public int hashCode() {
         return wordPlacement.hashCode() + syllablePlacement.hashCode() + 
-        		vowelPlacement.hashCode() + comesAfterFeatures.hashCode() +
-        		comesBeforeFeatures.hashCode();
+        		vowelPlacement.hashCode() + comesAfterPhonemes.hashCode() +
+        		comesBeforePhonemes.hashCode() +
+        		doesntComeAfterPhonemes.hashCode() + 
+        		doesntComeBeforePhonemes.hashCode();
     }
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Word Placements: ");
+		if (isGlobal()) {
+			sb.append("(Global Environment)");
+		}
+		
+		sb.append("\nWord Placements: ");
+		if (isWordPlacementGlobal()) {
+			sb.append(" (Global) ");
+		}
 		sb.append(getWordPlacement());
+		
 		sb.append("\nSyllable Placements: ");
+		if (isSyllablePlacementGlobal()) {
+			sb.append(" (Global) ");
+		}
 		sb.append(getSyllablePlacement());
+		
 		sb.append("\nVowel Placements: ");
+		if (isVowelPlacementGlobal()) {
+			sb.append(" (Global) ");
+		}
 		sb.append(getVowelPlacement());
 
 		sb.append("\nComes After PHONEMES\n");
+		if (isComesAfterPhonemesGlobal()) {
+			sb.append(" (Global) ");
+		}
 		sb.append(comesAfterPhonemes);
 
 		sb.append("\nDoesn't Come After PHONEMES\n");
 		sb.append(doesntComeAfterPhonemes);
 		
 		sb.append("\nComes Before PHONEMES\n");
+		if (isComesBeforePhonemesGlobal()) {
+			sb.append(" (Global) ");
+		}
 		sb.append(comesBeforePhonemes);
 
 		sb.append("\nDoesn't Come Before PHONEMES\n");
 		sb.append(doesntComeBeforePhonemes);
-
-//		sb.append("\nComes After Features\n");
-//		sb.append(getComesAfterFeatures().toString());
-//		
-//		sb.append("\nComes Before Features\n");
-//		sb.append(getComesBeforeFeatures().toString());
 		
 		return sb.toString();
 	}

@@ -161,11 +161,11 @@ public class SpecificRule {
 			boolean printSelfTransformingGlobals) {
 		String str = "";
 		if (printSelfTransformingGlobals) {
-			str = "RULES";
+			str = "SPECIFIC RULES";
 		} else {
-			str = "NON SELF TRANSFORMING GLOBAL RULES";
+			str = "NON SELF TRANSFORMING SPECIFIC GLOBAL RULES";
 		}
-		System.out.println("\n ******" + str + " ****");
+		System.out.println("\n******" + str + " ( " + rules.size() + ") ****");
 		
 		int count = 0;
 		for (SpecificRule r : rules) {
