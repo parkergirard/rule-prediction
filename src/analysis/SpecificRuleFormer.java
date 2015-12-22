@@ -394,6 +394,10 @@ public class SpecificRuleFormer {
 		return rules;
 	}
 
+	public Map<PHONEME, Set<SpecificRule>> getPhonemeToSpecificRules() {
+		return phonemeToRules;
+	}
+	
 	public String getMapString() {
 		StringBuilder sb = new StringBuilder();
 		for (Entry<PhonemeSequence[], PhonemeSequence[]> 

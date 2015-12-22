@@ -14,13 +14,16 @@ public class PronunciationGuesser {
 
 	private Collection<GeneralizedRule> rules;
 	private Map<FeatureProperties, PHONEME> featuresToPhoneme;
+	Map<PHONEME, Set<SpecificRule>> phonemeToSpecificRules;
 
 	/**
 	 * Given a set of general rules, construct a guesser
 	 * @param collection
 	 */
-	public PronunciationGuesser(Collection<GeneralizedRule> collection) {
+	public PronunciationGuesser(Collection<GeneralizedRule> collection, 
+			Map<PHONEME, Set<SpecificRule>> phonemeToSpecificRules) {
 		this.rules = collection;
+		this.phonemeToSpecificRules = phonemeToSpecificRules;
 		// initialize features to phoneme map
 		featuresToPhoneme = new HashMap<FeatureProperties, PHONEME>();
 		for (PHONEME p : PHONEME.values()) {
@@ -45,12 +48,12 @@ public class PronunciationGuesser {
 	 * array is a syllable with phonemes
 	 */
 	public String guessPronunciationOfTargetWord(String word) {
-		
+
 		PhonemeSequence[] targetSyllables = 
 				Helpers.convertStringToPhonemeSequence(word);
 
 		PhonemeSequence[] guessWord = new PhonemeSequence[targetSyllables.length];
-		
+
 		// previous phoneme will be compared to later
 		PHONEME previousPhoneme = null;
 
@@ -60,7 +63,7 @@ public class PronunciationGuesser {
 
 			List<PHONEME> targetPhonemeSeqAtSyllable = 
 					targetSyllables[i].getSequence();
-			
+
 			// the guess phoneme sequence for this syllable
 			PhonemeSequence guessSyllable = new PhonemeSequence();
 
@@ -112,7 +115,7 @@ public class PronunciationGuesser {
 					vowelPosition = VOWEL_POSITION.BEFORE;
 				}
 
-				
+
 				// If input phoneme is a vowel, return input phoneme
 				if (targetPhoneme.getGroup().equals(GROUP.VOWEL)) {
 					guessSyllable.add(targetPhoneme);
@@ -128,68 +131,81 @@ public class PronunciationGuesser {
 					if (nextPhoneme != null && !nextPhoneme.isVowel()) {
 						e.addComesBeforePhoneme(nextPhoneme);
 					}
-					// get rule that can apply for this phoneme/environment
-					
-					GeneralizedRule r = getRuleForPhonemeAndEnvironment(targetPhoneme, e);
-					if (r == null) {
-						// no rule was found. do not apply transformation
-						guessSyllable.add(targetPhoneme);
-					} else {
-						// a rule for this phoneme/environment exists.
-						// apply the rule to the phoneme
-						
-						PLACE transformsToPlace = null;
-						MANNER transformsToManner = null;
-						VOICE transformsToVoice = null;
-						
-						Set<FEATURE_TYPE> remainsSame = 
-								r.getFeatureTypesThatRemainSame();
 
-						FeatureProperties outputProps = r.getOutputPhonemeFeatures();
-						
-						// if place remains same, dont change it.
-						// otherwise, transform it
-						if (remainsSame.contains(FEATURE_TYPE.PLACE)) {
-							transformsToPlace = targetPhoneme.getPlace();
-						} else {
-							transformsToPlace = outputProps.getSinglePlace();
-						}
-						
-						// if manner remains same, dont change it.
-						// otherwise, transform it
-						if (remainsSame.contains(FEATURE_TYPE.MANNER)) {
-							transformsToManner = targetPhoneme.getManner();
-						} else {
-							transformsToManner = outputProps.getSingleManner();
-						}
-						
-						// if voice remains same, dont change it.
-						// otherwise, transform it
-						if (remainsSame.contains(FEATURE_TYPE.VOICE)) {
-							transformsToVoice = targetPhoneme.getVoice();
-						} else {
-							transformsToVoice = outputProps.getSingleVoice();
-						}
-						
-						FeatureProperties newPhonemeFeatures = new 
-								FeatureProperties(transformsToPlace, 
-										transformsToManner, transformsToVoice);
-						
-						// check if this phoneme exists
-						PHONEME transformToPhoneme = featuresToPhoneme
-								.get(newPhonemeFeatures);
-						
-						if (transformToPhoneme == null) {
-							// this phoneme doesn't exist. don't transform
+
+					// if there is a specific rule for this phoneme in this
+					// environment, follow the specific rule.
+
+					Set<SpecificRule> specificRules = phonemeToSpecificRules.get(targetPhoneme);
+					SpecificRule specificR = getSpecificRuleForPhonemeAndEnvironment(targetPhoneme, e);
+					if (specificR != null) {
+						// specific rule was found. add the transformation
+						guessSyllable.add(specificR.getActualPhoneme());
+					} else {
+						// no specific rule, so get general rule that can 
+						// apply for this phoneme/environment
+
+						GeneralizedRule r = getGeneralizedRuleForPhonemeAndEnvironment(targetPhoneme, e);
+						if (r == null) {
+							// no rule was found. do not apply transformation
 							guessSyllable.add(targetPhoneme);
 						} else {
-							// this phoneme exists. transform it
-							guessSyllable.add(transformToPhoneme);
+							// a rule for this phoneme/environment exists.
+							// apply the rule to the phoneme
+
+							PLACE transformsToPlace = null;
+							MANNER transformsToManner = null;
+							VOICE transformsToVoice = null;
+
+							Set<FEATURE_TYPE> remainsSame = 
+									r.getFeatureTypesThatRemainSame();
+
+							FeatureProperties outputProps = r.getOutputPhonemeFeatures();
+
+							// if place remains same, dont change it.
+							// otherwise, transform it
+							if (remainsSame.contains(FEATURE_TYPE.PLACE)) {
+								transformsToPlace = targetPhoneme.getPlace();
+							} else {
+								transformsToPlace = outputProps.getSinglePlace();
+							}
+
+							// if manner remains same, dont change it.
+							// otherwise, transform it
+							if (remainsSame.contains(FEATURE_TYPE.MANNER)) {
+								transformsToManner = targetPhoneme.getManner();
+							} else {
+								transformsToManner = outputProps.getSingleManner();
+							}
+
+							// if voice remains same, dont change it.
+							// otherwise, transform it
+							if (remainsSame.contains(FEATURE_TYPE.VOICE)) {
+								transformsToVoice = targetPhoneme.getVoice();
+							} else {
+								transformsToVoice = outputProps.getSingleVoice();
+							}
+
+							FeatureProperties newPhonemeFeatures = new 
+									FeatureProperties(transformsToPlace, 
+											transformsToManner, transformsToVoice);
+
+							// check if this phoneme exists
+							PHONEME transformToPhoneme = featuresToPhoneme
+									.get(newPhonemeFeatures);
+
+							if (transformToPhoneme == null) {
+								// this phoneme doesn't exist. don't transform
+								guessSyllable.add(targetPhoneme);
+							} else {
+								// this phoneme exists. transform it
+								guessSyllable.add(transformToPhoneme);
+							}
+
 						}
-						
 					}
 				}
-				
+
 				// move to next phoneme
 				j++;
 				previousPhoneme = targetPhoneme;
@@ -199,7 +215,7 @@ public class PronunciationGuesser {
 
 		return convertPhonemeSequenceArrayToString(guessWord);
 	}
-	
+
 	private String convertPhonemeSequenceArrayToString(PhonemeSequence[] seqArr) {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
@@ -212,7 +228,7 @@ public class PronunciationGuesser {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Helper to get a rule applicable to the given phoneme and environment
 	 * @param p: the phoneme
@@ -220,18 +236,46 @@ public class PronunciationGuesser {
 	 * @return: the rule that applies, or null if none do
 	 */
 	private GeneralizedRule 
-		getRuleForPhonemeAndEnvironment(PHONEME p, PhoneticEnvironment e) {
-		
+	getGeneralizedRuleForPhonemeAndEnvironment(PHONEME p, PhoneticEnvironment e) {
+
 		// loop through all rules
 		for (GeneralizedRule r : rules) {
-			
+
 			// if this rule applies to the given phoneme and given environment
 			if (r.appliesToPhoneme(p) && r.appliesToEnvironment(e, true)) {
 				return r;
 			}
-			
+
+		}
+
+		// no rule applied, return null
+		return null;
+	}
+
+	/**
+	 * Helper to get a rule applicable to the given phoneme and environment
+	 * @param p: the phoneme
+	 * @param e: the environment
+	 * @return: the rule that applies, or null if none do
+	 */
+	private SpecificRule 
+	getSpecificRuleForPhonemeAndEnvironment(PHONEME p, PhoneticEnvironment e) {
+
+		Set<SpecificRule> specificRules = phonemeToSpecificRules.get(p);
+		if (specificRules == null) {
+			return null;
 		}
 		
+		// loop through all rules
+		for (SpecificRule r : specificRules) {
+
+			// if this rule applies to the given phoneme and given environment
+			if (r.appliesToEnvironment(e, true)) {
+				return r;
+			}
+
+		}
+
 		// no rule applied, return null
 		return null;
 	}

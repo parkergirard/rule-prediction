@@ -108,6 +108,19 @@ public class SpecificRule {
 		return targetPhoneme.equals(actualPhoneme);
 	}
 	
+	
+	/**
+	 * Whether or not this rule applies to a given environment
+	 * @param e: the environment
+	 * @param ignoreDoesntCome: whether or not to check if doesntComeAfter/Before contains
+	 * the other environment's
+	 * @return true if all aspects of the rule's environment contain all aspects
+	 * of the environment
+	 */
+	public boolean appliesToEnvironment(PhoneticEnvironment e, boolean ignoreDoesntCome) {
+		return environment.containsEnvironment(e, ignoreDoesntCome);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
