@@ -51,12 +51,58 @@ public class PronunciationGuesserTest {
 		
 		SpecificRuleFormer rp = new SpecificRuleFormer(map);
 		
-		
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
+		
+		GeneralizedRule.printRules(genRules);
+		
 		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
-//		assertEquals("D-EY-M", guesser.guessPronunciationOfTargetWord("G-EY-M"));
+		assertEquals("D-UH-K", guesser.guessPronunciationOfTargetWord("D-UH-G"));
+		String guess = guesser.guessPronunciationOfTargetWord("L-AH K-IY");
+		assertEquals("W-AH K-IY", guess);
+		guess = guesser.guessPronunciationOfTargetWord("T-AE-G");
+		assertEquals("T-AE-K", guess);
+		guess = guesser.guessPronunciationOfTargetWord("R-AE G-IY");
+		assertEquals("W-AE G-IY", guess);
+		guess = guesser.guessPronunciationOfTargetWord("L-IH-D");
+		assertEquals("W-IH-D", guess);
+	}
+	
+	@Test
+	public void testZebraData() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("K-AE-S-T", "K-AE-S-T");
+		map.put("S-AA-K", "TH-AA-K");
+		map.put("Z-IY B-R-AX", "DH-IY B-R-AX");
+		map.put("P-L-IY-Z", "P-L-IY-Z");
+		
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
+		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
+		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
+		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
+		assertEquals("DH-IH-P", guesser.guessPronunciationOfTargetWord("Z-IH-P"));
+	}
+	
+	@Test
+	public void test3() {
+		Map<String, String> map = new HashMap<String, String>();
+
+		map.put("L-AE D-AXR", "L-AE D-AXR");
+		map.put("R-IH-NG", "W-IH-NG");
+		map.put("JH-AX R-AE-F", "JH-AX W-AE-F");
+		map.put("S-T-AO_R", "S-T-AO_R");
+		
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
+		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
+		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
+		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
+		String guess = guesser.guessPronunciationOfTargetWord("M-AE N-ER");
+		assertEquals("M-AE N-ER", guess);
+		guess = guesser.guessPronunciationOfTargetWord("R-AX B-ER");
+		assertEquals("W-AX B-ER", guess);
+		guess = guesser.guessPronunciationOfTargetWord("S-T-R-IH-P");
+		assertEquals("S-T-W-IH-P", guess);
 	}
 
 }

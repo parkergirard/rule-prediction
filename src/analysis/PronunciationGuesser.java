@@ -44,7 +44,7 @@ public class PronunciationGuesser {
 	 * @param word: the target word the child will try to say. the word
 	 * should be separated by spaces for a new syllable, and dashes for a new phoneme
 	 * ie, Parker would be: P-A-R K-E-R
-	 * @return the guess, where each element in the 
+	 * @return an array of guesses, where each element in the 
 	 * array is a syllable with phonemes
 	 */
 	public String guessPronunciationOfTargetWord(String word) {
@@ -52,7 +52,7 @@ public class PronunciationGuesser {
 		PhonemeSequence[] targetSyllables = 
 				Helpers.convertStringToPhonemeSequence(word);
 
-		PhonemeSequence[] guessWord = new PhonemeSequence[targetSyllables.length];
+		PhonemeSequence[] guessGeneral = new PhonemeSequence[targetSyllables.length];
 
 		// previous phoneme will be compared to later
 		PHONEME previousPhoneme = null;
@@ -65,7 +65,7 @@ public class PronunciationGuesser {
 					targetSyllables[i].getSequence();
 
 			// the guess phoneme sequence for this syllable
-			PhonemeSequence guessSyllable = new PhonemeSequence();
+			PhonemeSequence guessSyllableGeneral = new PhonemeSequence();
 
 			POSITION syllablePosition = CONSONANT_POSITION.BEGINNING;
 			// loop through all phonemes in the syllable
@@ -118,7 +118,7 @@ public class PronunciationGuesser {
 
 				// If input phoneme is a vowel, return input phoneme
 				if (targetPhoneme.getGroup().equals(GROUP.VOWEL)) {
-					guessSyllable.add(targetPhoneme);
+					guessSyllableGeneral.add(targetPhoneme);
 				} else {
 					// construct this environment
 					PhoneticEnvironment e = new PhoneticEnvironment(false);
@@ -136,11 +136,10 @@ public class PronunciationGuesser {
 					// if there is a specific rule for this phoneme in this
 					// environment, follow the specific rule.
 
-					Set<SpecificRule> specificRules = phonemeToSpecificRules.get(targetPhoneme);
 					SpecificRule specificR = getSpecificRuleForPhonemeAndEnvironment(targetPhoneme, e);
 					if (specificR != null) {
 						// specific rule was found. add the transformation
-						guessSyllable.add(specificR.getActualPhoneme());
+						guessSyllableGeneral.add(specificR.getActualPhoneme());
 					} else {
 						// no specific rule, so get general rule that can 
 						// apply for this phoneme/environment
@@ -148,7 +147,7 @@ public class PronunciationGuesser {
 						GeneralizedRule r = getGeneralizedRuleForPhonemeAndEnvironment(targetPhoneme, e);
 						if (r == null) {
 							// no rule was found. do not apply transformation
-							guessSyllable.add(targetPhoneme);
+							guessSyllableGeneral.add(targetPhoneme);
 						} else {
 							// a rule for this phoneme/environment exists.
 							// apply the rule to the phoneme
@@ -196,24 +195,25 @@ public class PronunciationGuesser {
 
 							if (transformToPhoneme == null) {
 								// this phoneme doesn't exist. don't transform
-								guessSyllable.add(targetPhoneme);
+								guessSyllableGeneral.add(targetPhoneme);
 							} else {
 								// this phoneme exists. transform it
-								guessSyllable.add(transformToPhoneme);
+								guessSyllableGeneral.add(transformToPhoneme);
 							}
 
 						}
 					}
+					
 				}
 
 				// move to next phoneme
 				j++;
 				previousPhoneme = targetPhoneme;
 			}
-			guessWord[i] = guessSyllable;
+			guessGeneral[i] = guessSyllableGeneral;
 		}
 
-		return convertPhonemeSequenceArrayToString(guessWord);
+		return convertPhonemeSequenceArrayToString(guessGeneral);
 	}
 
 	private String convertPhonemeSequenceArrayToString(PhonemeSequence[] seqArr) {
