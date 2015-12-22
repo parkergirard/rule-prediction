@@ -190,8 +190,7 @@ public class App extends Application {
         	addTargetGuessToTable(target, guess);
             targetInput.clear();
     	} catch (Exception ex) {
-    		 popMessage(target + " contains an invalid "
-	        			+ "phoneme according to the Arpabet."
+    		 popMessage(ex.getMessage() + " according to the Arpabet."
 	    		 		+ "\nPlease make sure to add a '-' after every phoneme."
 	    		 		+ "\nOptionally, "
 	    		 		+ "add a space after every syllable. For example:\n"
