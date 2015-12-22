@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -38,7 +40,7 @@ public class App extends Application {
     TextField targetInput;
     private PronunciationGuesser guesser;
     
-    private Set<String> alreadyGuessed = new HashSet<String>();
+    private Map<String, TargetToGuess> alreadyGuessed = new HashMap<String, TargetToGuess>();
 
     public static void main(String[] args) {
         launch(args);
@@ -75,7 +77,7 @@ public class App extends Application {
         infoBox.getChildren().addAll(instructionsButton, notesButton);
 
         // Load Button
-        Button loadFileButton = new Button("Load Training Set From File");
+        Button loadFileButton = new Button("Load New Training Set From File");
         loadFileButton.setOnAction(e -> loadButtonClicked(primaryStage));
         HBox loadingBox = new HBox();
         loadingBox.setPadding(new Insets(10,10,10,10));
@@ -97,7 +99,6 @@ public class App extends Application {
         guessBox.getChildren().addAll(targetInput, guessButton);
 
         table = new TableView<>();
-        table.setItems(getProduct());
         table.getColumns().addAll(targetColumn, guessColumn);
 
         VBox vBox = new VBox();
@@ -165,11 +166,13 @@ public class App extends Application {
     	RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
 		guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
+		table.getItems().removeAll(alreadyGuessed.values());
+		alreadyGuessed.clear();
 		for (Entry<String, String> e : rp.getInputtedData().entrySet()) {
 			String target = e.getKey();
-			if (!alreadyGuessed.contains(target)) {
+			if (!alreadyGuessed.containsKey(target)) {
 				addTargetGuessToTable(target, e.getValue());
-	    		alreadyGuessed.add(target);
+	    		alreadyGuessed.put(target, new TargetToGuess(target, e.getValue()));
 			}
 		}
     }
@@ -185,12 +188,12 @@ public class App extends Application {
     		popMessage("Please enter a target word.", AlertType.ERROR);
     		return;
     	}
-    	if (alreadyGuessed.contains(target)) {
+    	if (alreadyGuessed.containsKey(target)) {
     		return;
     	}
     	try {
     		String guess = guesser.guessPronunciationOfTargetWord(target);
-    		alreadyGuessed.add(target);
+    		alreadyGuessed.put(target, new TargetToGuess(target, guess));
         	addTargetGuessToTable(target, guess);
             targetInput.clear();
     	} catch (Exception ex) {
@@ -214,12 +217,6 @@ public class App extends Application {
     
     private void addTargetGuessToTable(String t, String g) {
     	table.getItems().add(new TargetToGuess(t, g));
-    }
-
-    //Get all of the products
-    public ObservableList<TargetToGuess> getProduct(){
-        ObservableList<TargetToGuess> guesses = FXCollections.observableArrayList();
-        return guesses;
     }
 
 
