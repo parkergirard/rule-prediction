@@ -7,15 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -54,12 +50,12 @@ public class App extends Application {
 
         //Name column
         TableColumn<TargetToGuess, String> targetColumn = new TableColumn<>("Target");
-        targetColumn.setMinWidth(200);
+        targetColumn.setMinWidth(400);
         targetColumn.setCellValueFactory(new PropertyValueFactory<>("target"));
 
         //Price column
         TableColumn<TargetToGuess, Double> guessColumn = new TableColumn<>("Guess");
-        guessColumn.setMinWidth(100);
+        guessColumn.setMinWidth(400);
         guessColumn.setCellValueFactory(new PropertyValueFactory<>("guess"));
 
         // Info Button
@@ -69,32 +65,29 @@ public class App extends Application {
         // Notes Button
         Button notesButton = new Button("Notes/Credit");
         notesButton.setOnAction(e -> notesButtonClicked());
+
+        // Load Button
+        Button loadFileButton = new Button("Load New Training Set From File");
+        loadFileButton.setOnAction(e -> loadButtonClicked(primaryStage));
         
         // Top Horizontal
         HBox infoBox = new HBox();
         infoBox.setPadding(new Insets(10,10,10,10));
         infoBox.setSpacing(10);
-        infoBox.getChildren().addAll(instructionsButton, notesButton);
+        infoBox.getChildren().addAll(loadFileButton, instructionsButton, notesButton);
 
-        // Load Button
-        Button loadFileButton = new Button("Load New Training Set From File");
-        loadFileButton.setOnAction(e -> loadButtonClicked(primaryStage));
-        HBox loadingBox = new HBox();
-        loadingBox.setPadding(new Insets(10,10,10,10));
-        loadingBox.setSpacing(10);
-        loadingBox.getChildren().addAll(loadFileButton);
         
         //Target input
         targetInput = new TextField();
         targetInput.setPromptText("Target Word");
-        targetInput.setMinWidth(100);
+        targetInput.setMinWidth(300);
 
         //Guess Button
         Button guessButton = new Button("Guess");
         guessButton.setOnAction(e -> guessButtonClicked());
 
         HBox guessBox = new HBox();
-        guessBox.setPadding(new Insets(10,10,10,10));
+        guessBox.setPadding(new Insets(10,10,10,200));
         guessBox.setSpacing(10);
         guessBox.getChildren().addAll(targetInput, guessButton);
 
@@ -102,7 +95,7 @@ public class App extends Application {
         table.getColumns().addAll(targetColumn, guessColumn);
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(infoBox, table, guessBox, loadingBox);
+        vBox.getChildren().addAll(infoBox, table, guessBox);
 
         Scene scene = new Scene(vBox);
         window.setScene(scene);
@@ -218,6 +211,8 @@ public class App extends Application {
     private void addTargetGuessToTable(String t, String g) {
     	table.getItems().add(new TargetToGuess(t, g));
     }
+    
+    
 
 
 }
