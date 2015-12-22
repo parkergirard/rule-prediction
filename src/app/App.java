@@ -35,7 +35,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
-public class Frame1 extends Application {
+public class App extends Application {
 
     //File Chooser
     final FileChooser fileChooser = new FileChooser();
