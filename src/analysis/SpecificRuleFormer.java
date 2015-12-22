@@ -24,6 +24,8 @@ public class SpecificRuleFormer {
 	// maps a phoneme to a set of rules for that phoneme
 	// (the rules alter in phonetic environments)
 	private Map<PHONEME, Set<SpecificRule>> phonemeToRules;
+	
+	private Map<String, String> inputtedData;
 
 	/**
 	 * Construct given a map of strings,
@@ -31,10 +33,49 @@ public class SpecificRuleFormer {
 	 * @param map: maps target words to pronunciation
 	 */
 	public SpecificRuleFormer(Map<String, String> map) {
+		init(map);
+	}
 
+	/**
+	 * Construct from an input file where each new line separates
+	 * a target from how it's pronounced
+	 * @param file
+	 * @throws IOException
+	 */
+	public SpecificRuleFormer(File file) throws IOException {
+		Map<String, String> map = new HashMap<String, String>();
+		String target = null;
+		String actual = null;
+		int count = 0;
+    	try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
+    		String line = null;
+    		while ((line = br.readLine()) != null) {
+    			if (count % 2 == 0) {
+    				target = line;
+    			} else {
+    				actual = line;
+    				map.put(target, actual);
+    			}
+    			count++;
+    		}
+    	}
+    	if (count % 2 != 0) {
+    		throw new IllegalArgumentException("Every target must have a pronunciation."
+    				+ " You have " + count + " words total.");
+    	}
+    	init(map);
+	}
+	
+	/**
+	 * Common ground for constructors
+	 * @param map
+	 */
+	private void init(Map<String, String> map) {
 		if (map == null) {
 			throw new IllegalArgumentException("Map cannot be null");
 		}
+		
+		inputtedData = map;
 
 		this.targetToPronunciation = 
 				new HashMap<PhonemeSequence[], PhonemeSequence[]>();
@@ -50,17 +91,12 @@ public class SpecificRuleFormer {
 					targetToPronunciation.put(target, val);
 				}
 
-				phonemeToRules = new HashMap<PHONEME, Set<SpecificRule>>();
-				formRules();
+		phonemeToRules = new HashMap<PHONEME, Set<SpecificRule>>();
+		formRules();
 	}
-
-	public SpecificRuleFormer(File file) throws IOException {
-    	try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
-    		String line = null;
-    		while ((line = br.readLine()) != null) {
-    			System.out.println(line);
-    		}
-    	}
+	
+	public Map<String, String> getInputtedData() {
+		return inputtedData;
 	}
 
 	/**

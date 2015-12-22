@@ -1,10 +1,12 @@
 package app;
 
 import analysis.*;
-import java.awt.Desktop;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map.Entry;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -29,6 +31,7 @@ public class Frame1 extends Application {
     Stage window;
     TableView<TargetToGuess> table;
     TextField targetInput;
+    private PronunciationGuesser guesser;
 
     public static void main(String[] args) {
         launch(args);
@@ -96,13 +99,25 @@ public class Frame1 extends Application {
 	}
     
     private void loadFile(File file) throws FileNotFoundException, IOException {
-    	SpecificRuleFormer srf = new SpecificRuleFormer(file);
+    	SpecificRuleFormer rp = new SpecificRuleFormer(file);
+    	RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
+		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
+		guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
+		for (Entry<String, String> e : rp.getInputtedData().entrySet()) {
+			addTargetGuessToTable(e.getKey(), e.getValue());
+		}
     }
 
 	//Add button clicked
     public void guessButtonClicked(){
-        table.getItems().add(new TargetToGuess(targetInput.getText(), "guess"));
+    	String target = targetInput.getText();
+    	String guess = guesser.guessPronunciationOfTargetWord(target);
+    	addTargetGuessToTable(target, guess);
         targetInput.clear();
+    }
+    
+    private void addTargetGuessToTable(String t, String g) {
+    	table.getItems().add(new TargetToGuess(t, g));
     }
 
     //Get all of the products
