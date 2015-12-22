@@ -11,6 +11,7 @@ import org.junit.Test;
 import analysis.GeneralizedRule;
 import analysis.PronunciationGuesser;
 import analysis.RuleGeneralizer;
+import analysis.SpecificRule;
 import analysis.SpecificRuleFormer;
 
 public class PronunciationGuesserTest {
@@ -54,7 +55,6 @@ public class PronunciationGuesserTest {
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
-		
 		
 		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
 		assertEquals("D-UH-K", guesser.guessPronunciationOfTargetWord("D-UH-G"));
@@ -132,7 +132,6 @@ public class PronunciationGuesserTest {
 		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
 		
-		GeneralizedRule.printRules(genRules);
 		
 		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
 		
@@ -147,7 +146,7 @@ public class PronunciationGuesserTest {
 
 		guess = guesser.guessPronunciationOfTargetWord("K-R-AE-SH");
 		assertEquals("K-R-AE-S", guess);
-
+		
 		guess = guesser.guessPronunciationOfTargetWord("S-L-AE-M");
 		assertEquals("TH-L-AE-M", guess);
 

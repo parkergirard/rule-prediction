@@ -192,7 +192,7 @@ public class PronunciationGuesser {
 	private PHONEME 
 		getTransformationPhonemeFromGeneralizedRuleForPhonemeAndEnvironment
 		(PHONEME targetPhoneme, PhoneticEnvironment e) {
-
+		
 		// loop through all rules
 		for (GeneralizedRule r : rules) {
 

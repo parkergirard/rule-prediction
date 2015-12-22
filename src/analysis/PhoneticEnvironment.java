@@ -100,7 +100,9 @@ public class PhoneticEnvironment {
 	}
 
 	public void addVowelPlacement(POSITION p) {
-		vowelPlacement.add(p);
+		if (p != null) {
+			vowelPlacement.add(p);
+		}
 	}
 
 	public Set<POSITION> getVowelPlacement() {
