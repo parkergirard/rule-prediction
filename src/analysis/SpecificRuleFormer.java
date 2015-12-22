@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -84,9 +85,9 @@ public class SpecificRuleFormer {
 				for (Entry<String, String> e : map.entrySet()) {
 					// function will throw error if invalid phoneme
 					PhonemeSequence[] target = 
-							Helpers.convertStringToPhonemeSequence(e.getKey());
+							Helpers.convertStringToPhonemeSequence(e.getKey().toUpperCase(Locale.ENGLISH));
 					PhonemeSequence[] val = 
-							Helpers.convertStringToPhonemeSequence(e.getValue());
+							Helpers.convertStringToPhonemeSequence(e.getValue().toUpperCase(Locale.ENGLISH));
 					// valid phonemes, add to map
 					targetToPronunciation.put(target, val);
 				}

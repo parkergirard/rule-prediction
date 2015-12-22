@@ -23,6 +23,7 @@ public enum VOWELS_FOR_REFERENCE {
 	ER,
 	AXR,
 	EH_R,
+	UH_R,
 	AO_R,
 	AA_R,
 	IH_R,

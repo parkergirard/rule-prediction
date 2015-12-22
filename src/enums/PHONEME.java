@@ -36,6 +36,7 @@ public enum PHONEME {
 	ER (GROUP.VOWEL, null, null, VOICE.VOICED),
 	AXR (GROUP.VOWEL, null, null, VOICE.VOICED),
 	EH_R (GROUP.VOWEL, null, null, VOICE.VOICED),
+	UH_R (GROUP.VOWEL, null, null, VOICE.VOICED),
 	AO_R (GROUP.VOWEL, null, null, VOICE.VOICED),
 	AA_R (GROUP.VOWEL, null, null, VOICE.VOICED),
 	IH_R (GROUP.VOWEL, null, null, VOICE.VOICED),
