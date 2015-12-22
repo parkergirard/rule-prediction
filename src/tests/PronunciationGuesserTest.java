@@ -11,7 +11,6 @@ import org.junit.Test;
 import analysis.GeneralizedRule;
 import analysis.PronunciationGuesser;
 import analysis.RuleGeneralizer;
-import analysis.SpecificRule;
 import analysis.SpecificRuleFormer;
 
 public class PronunciationGuesserTest {

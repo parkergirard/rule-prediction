@@ -1,6 +1,10 @@
 package analysis;
 import helpers.Helpers;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +52,15 @@ public class SpecificRuleFormer {
 
 				phonemeToRules = new HashMap<PHONEME, Set<SpecificRule>>();
 				formRules();
+	}
+
+	public SpecificRuleFormer(File file) throws IOException {
+    	try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
+    		String line = null;
+    		while ((line = br.readLine()) != null) {
+    			System.out.println(line);
+    		}
+    	}
 	}
 
 	/**
