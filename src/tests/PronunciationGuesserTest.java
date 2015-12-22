@@ -55,7 +55,6 @@ public class PronunciationGuesserTest {
 		
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
 		
-		GeneralizedRule.printRules(genRules);
 		
 		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
 		assertEquals("D-UH-K", guesser.guessPronunciationOfTargetWord("D-UH-G"));
@@ -82,6 +81,21 @@ public class PronunciationGuesserTest {
 		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
 		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
 		assertEquals("DH-IH-P", guesser.guessPronunciationOfTargetWord("Z-IH-P"));
+
+		String guess = guesser.guessPronunciationOfTargetWord("HH-IH-S");
+		assertEquals("HH-IH-S", guess);
+		
+		guess = guesser.guessPronunciationOfTargetWord("D-AA-G-Z");
+		assertEquals("D-AA-G-Z", guess);
+		
+		guess = guesser.guessPronunciationOfTargetWord("W-IH-SH");
+		assertEquals("W-IH-SH", guess);
+		
+		guess = guesser.guessPronunciationOfTargetWord("M-IY-S");
+		assertEquals("M-IY-S", guess);
+		
+		guess = guesser.guessPronunciationOfTargetWord("S-AE-T");
+		assertEquals("TH-AE-T", guess);
 	}
 	
 	@Test
@@ -103,6 +117,42 @@ public class PronunciationGuesserTest {
 		assertEquals("W-AX B-ER", guess);
 		guess = guesser.guessPronunciationOfTargetWord("S-T-R-IH-P");
 		assertEquals("S-T-W-IH-P", guess);
+	}
+	
+	@Test
+	public void testLithpData() {
+		Map<String, String> map = new HashMap<String, String>();
+
+		map.put("L-IH-S-P", "L-IH-TH-P");
+		map.put("D-AA-G-Z", "D-AA-G-DH");
+		map.put("SH-IH-P", "S-IH-P");
+		map.put("W-AA-CH", "W-AA-SH");
+		
+		SpecificRuleFormer rp = new SpecificRuleFormer(map);
+		RuleGeneralizer rg = new RuleGeneralizer(rp.getRules());
+		Collection<GeneralizedRule> genRules = rg.getGeneralizedRules();
+		
+		GeneralizedRule.printRules(genRules);
+		
+		PronunciationGuesser guesser = new PronunciationGuesser(genRules, rp.getPhonemeToSpecificRules());
+		
+		String guess = guesser.guessPronunciationOfTargetWord("HH-AE-S");
+		assertEquals("HH-AE-TH", guess);
+		
+		guess = guesser.guessPronunciationOfTargetWord("JH-IH-M");
+		assertEquals("ZH-IH-M", guess);
+
+		guess = guesser.guessPronunciationOfTargetWord("SH-AA-P");
+		assertEquals("S-AA-P", guess);
+
+		guess = guesser.guessPronunciationOfTargetWord("K-R-AE-SH");
+		assertEquals("K-R-AE-S", guess);
+
+		guess = guesser.guessPronunciationOfTargetWord("S-L-AE-M");
+		assertEquals("TH-L-AE-M", guess);
+
+		guess = guesser.guessPronunciationOfTargetWord("CH-AA-P");
+		assertEquals("SH-AA-P", guess);
 	}
 
 }

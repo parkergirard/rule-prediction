@@ -144,64 +144,17 @@ public class PronunciationGuesser {
 						// no specific rule, so get general rule that can 
 						// apply for this phoneme/environment
 
-						GeneralizedRule r = getGeneralizedRuleForPhonemeAndEnvironment(targetPhoneme, e);
-						if (r == null) {
-							// no rule was found. do not apply transformation
+						PHONEME transformToPhoneme = 
+								getTransformationPhonemeFromGeneralizedRuleForPhonemeAndEnvironment(targetPhoneme, e);
+
+						if (transformToPhoneme == null) {
+							// this phoneme doesn't exist. don't transform
 							guessSyllableGeneral.add(targetPhoneme);
 						} else {
-							// a rule for this phoneme/environment exists.
-							// apply the rule to the phoneme
-
-							PLACE transformsToPlace = null;
-							MANNER transformsToManner = null;
-							VOICE transformsToVoice = null;
-
-							Set<FEATURE_TYPE> remainsSame = 
-									r.getFeatureTypesThatRemainSame();
-
-							FeatureProperties outputProps = r.getOutputPhonemeFeatures();
-
-							// if place remains same, dont change it.
-							// otherwise, transform it
-							if (remainsSame.contains(FEATURE_TYPE.PLACE)) {
-								transformsToPlace = targetPhoneme.getPlace();
-							} else {
-								transformsToPlace = outputProps.getSinglePlace();
-							}
-
-							// if manner remains same, dont change it.
-							// otherwise, transform it
-							if (remainsSame.contains(FEATURE_TYPE.MANNER)) {
-								transformsToManner = targetPhoneme.getManner();
-							} else {
-								transformsToManner = outputProps.getSingleManner();
-							}
-
-							// if voice remains same, dont change it.
-							// otherwise, transform it
-							if (remainsSame.contains(FEATURE_TYPE.VOICE)) {
-								transformsToVoice = targetPhoneme.getVoice();
-							} else {
-								transformsToVoice = outputProps.getSingleVoice();
-							}
-
-							FeatureProperties newPhonemeFeatures = new 
-									FeatureProperties(transformsToPlace, 
-											transformsToManner, transformsToVoice);
-
-							// check if this phoneme exists
-							PHONEME transformToPhoneme = featuresToPhoneme
-									.get(newPhonemeFeatures);
-
-							if (transformToPhoneme == null) {
-								// this phoneme doesn't exist. don't transform
-								guessSyllableGeneral.add(targetPhoneme);
-							} else {
-								// this phoneme exists. transform it
-								guessSyllableGeneral.add(transformToPhoneme);
-							}
-
+							// this phoneme exists. transform it
+							guessSyllableGeneral.add(transformToPhoneme);
 						}
+
 					}
 					
 				}
@@ -230,20 +183,66 @@ public class PronunciationGuesser {
 	}
 
 	/**
-	 * Helper to get a rule applicable to the given phoneme and environment
+	 * Helper to get a phoneme from a generalized rule
+	 *  applicable to the given phoneme and environment
 	 * @param p: the phoneme
 	 * @param e: the environment
-	 * @return: the rule that applies, or null if none do
+	 * @return: the phoneme given by rule that applies, or null if none do
 	 */
-	private GeneralizedRule 
-	getGeneralizedRuleForPhonemeAndEnvironment(PHONEME p, PhoneticEnvironment e) {
+	private PHONEME 
+		getTransformationPhonemeFromGeneralizedRuleForPhonemeAndEnvironment
+		(PHONEME targetPhoneme, PhoneticEnvironment e) {
 
 		// loop through all rules
 		for (GeneralizedRule r : rules) {
 
 			// if this rule applies to the given phoneme and given environment
-			if (r.appliesToPhoneme(p) && r.appliesToEnvironment(e, true)) {
-				return r;
+			if (r.appliesToPhoneme(targetPhoneme) && r.appliesToEnvironment(e, true)) {
+
+				PLACE transformsToPlace = null;
+				MANNER transformsToManner = null;
+				VOICE transformsToVoice = null;
+
+				Set<FEATURE_TYPE> remainsSame = 
+						r.getFeatureTypesThatRemainSame();
+
+				FeatureProperties outputProps = r.getOutputPhonemeFeatures();
+
+				// if place remains same, dont change it.
+				// otherwise, transform it
+				if (remainsSame.contains(FEATURE_TYPE.PLACE)) {
+					transformsToPlace = targetPhoneme.getPlace();
+				} else {
+					transformsToPlace = outputProps.getSinglePlace();
+				}
+
+				// if manner remains same, dont change it.
+				// otherwise, transform it
+				if (remainsSame.contains(FEATURE_TYPE.MANNER)) {
+					transformsToManner = targetPhoneme.getManner();
+				} else {
+					transformsToManner = outputProps.getSingleManner();
+				}
+
+				// if voice remains same, dont change it.
+				// otherwise, transform it
+				if (remainsSame.contains(FEATURE_TYPE.VOICE)) {
+					transformsToVoice = targetPhoneme.getVoice();
+				} else {
+					transformsToVoice = outputProps.getSingleVoice();
+				}
+
+				FeatureProperties newPhonemeFeatures = new 
+						FeatureProperties(transformsToPlace, 
+								transformsToManner, transformsToVoice);
+
+				// check if this phoneme exists
+				PHONEME transformToPhoneme = featuresToPhoneme
+						.get(newPhonemeFeatures);
+				// return the new phoneme if it is real
+				if (transformToPhoneme != null) {
+					return transformToPhoneme;
+				}
 			}
 
 		}
@@ -271,6 +270,7 @@ public class PronunciationGuesser {
 
 			// if this rule applies to the given phoneme and given environment
 			if (r.appliesToEnvironment(e, true)) {
+				
 				return r;
 			}
 
